@@ -282,6 +282,7 @@ namespace ShapeGame
                             {
                                 player.IsAlive = true;
 
+                                player.DetectGesture(skeleton.Joints);
                                 // Head, hands, feet (hit testing happens in order here)
                                 player.UpdateJointPosition(skeleton.Joints, JointType.Head);
                                 player.UpdateJointPosition(skeleton.Joints, JointType.HandLeft);

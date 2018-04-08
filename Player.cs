@@ -76,6 +76,22 @@ namespace ShapeGame
             this.playerScale = Math.Min(this.playerBounds.Width, this.playerBounds.Height / 2);
         }
 
+        public bool DetectGesture(Microsoft.Kinect.JointCollection joints)
+        {
+            var leftHand = Microsoft.Kinect.JointType.HandLeft;
+            var elbowLeft = Microsoft.Kinect.JointType.ElbowLeft;
+            if (joints[leftHand].Position.Y > joints[elbowLeft].Position.Y)
+            {
+                Console.Write("raised");
+                if (joints[leftHand].Position.X > joints[elbowLeft].Position.X)
+                {
+                    Console.Write("second");
+                }
+            }
+
+                return false;
+        }
+
         public void UpdateBonePosition(Microsoft.Kinect.JointCollection joints, JointType j1, JointType j2)
         {
             var seg = new Segment(

@@ -139,6 +139,23 @@ namespace ShapeGame.Speech
                 { "Go", new WhatSaid { Verb = Verbs.Resume } },
             };
 
+        private readonly Dictionary<string, WhatSaid> controlPhrases = new Dictionary<string, WhatSaid>
+            {
+                { "Speed Up", new WhatSaid { Verb = Verbs.Faster } },
+                { "Slow Down", new WhatSaid { Verb = Verbs.Slower } },
+                { "Reset", new WhatSaid { Verb = Verbs.Reset } },
+                { "Clear", new WhatSaid { Verb = Verbs.Reset } },
+                { "Stop", new WhatSaid { Verb = Verbs.Pause } },
+                { "Pause Game", new WhatSaid { Verb = Verbs.Pause } },
+                { "Freeze", new WhatSaid { Verb = Verbs.Pause } },
+                { "Unfreeze", new WhatSaid { Verb = Verbs.Resume } },
+                { "Resume", new WhatSaid { Verb = Verbs.Resume } },
+                { "Continue", new WhatSaid { Verb = Verbs.Resume } },
+                { "Play", new WhatSaid { Verb = Verbs.Resume } },
+                { "Start", new WhatSaid { Verb = Verbs.Resume } },
+                { "Go", new WhatSaid { Verb = Verbs.Resume } },
+            };
+
         private SpeechRecognitionEngine sre;
         private KinectAudioSource kinectAudioSource;
         private bool paused;
