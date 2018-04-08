@@ -85,6 +85,11 @@ namespace ShapeGame.Speech
         private readonly Dictionary<string, WhatSaid> controlPhrases = new Dictionary<string, WhatSaid>
             {
                 { "Stop", new WhatSaid { Verb = Verbs.Stop } },
+                { "Play", new WhatSaid { Verb = Verbs.Play } },
+                { "Cycle", new WhatSaid { Verb = Verbs.LoopOn } },
+                { "Loop Off", new WhatSaid { Verb = Verbs.LoopOff } },
+                { "Set Start", new WhatSaid { Verb = Verbs.SetLoopStart } },
+                { "Set End", new WhatSaid { Verb = Verbs.SetLoopEnd } },
             };
 
 
@@ -120,7 +125,12 @@ namespace ShapeGame.Speech
             Reset,
             Pause,
             Resume,
-            Stop
+            Stop,
+            Play,
+            LoopOn,
+            LoopOff,
+            SetLoopStart,
+            SetLoopEnd
         }
 
         public EchoCancellationMode EchoCancellationMode
@@ -269,38 +279,46 @@ namespace ShapeGame.Speech
             var single = new Choices();
             foreach (var phrase in this.singlePhrases)
             {
-                single.Add(phrase.Key);
+                //single.Add(phrase.Key);
             }
 
             var gameplay = new Choices();
             foreach (var phrase in this.gameplayPhrases)
             {
-                gameplay.Add(phrase.Key);
+                //gameplay.Add(phrase.Key);
             }
 
             var shapes = new Choices();
             foreach (var phrase in this.shapePhrases)
             {
-                shapes.Add(phrase.Key);
+                //shapes.Add(phrase.Key);
+            }
+
+            var colors = new Choices();
+            foreach (var phrase in this.colorPhrases)
+            {
+                //colors.Add(phrase.Key);
             }
 
             var coloredShapeGrammar = new GrammarBuilder();
             coloredShapeGrammar.Append(colors);
             coloredShapeGrammar.Append(shapes);
+            coloredShapeGrammar.Append(controls);
 
             var objectChoices = new Choices();
             objectChoices.Add(gameplay);
             objectChoices.Add(shapes);
             objectChoices.Add(colors);
             objectChoices.Add(coloredShapeGrammar);
+            objectChoices.Add(controls);
 
             var actionGrammar = new GrammarBuilder();
             actionGrammar.AppendWildcard();
             actionGrammar.Append(objectChoices);
+            actionGrammar.Append(controls);
 
             var allChoices = new Choices();
-            allChoices.Add(actionGrammar);
-            allChoices.Add(single);
+            allChoices.Add(controls);
 
             // This is needed to ensure that it will work on machines with any culture, not just en-us.
             var gb = new GrammarBuilder { Culture = speechRecognitionEngine.RecognizerInfo.Culture };
@@ -363,7 +381,65 @@ namespace ShapeGame.Speech
                 MainWindow.QUEUE.Push(cmd);
             }
 
+            else if (said.Verb == Verbs.Play)
+            {
+                Dictionary<string, string> cmd = new Dictionary<string, string>
+                    {
+                        { "Command", "play" },
+                    };
+                MainWindow.QUEUE.Push(cmd);
+            }
+
+            else if (said.Verb == Verbs.LoopOn)
+            {
+                Dictionary<string, string> cmd = new Dictionary<string, string>
+                    {
+                        { "Command", "loopOn" },
+                    };
+                MainWindow.QUEUE.Push(cmd);
+            }
+
+            else if (said.Verb == Verbs.LoopOff)
+            {
+                Dictionary<string, string> cmd = new Dictionary<string, string>
+                    {
+                        { "Command", "loopOff" },
+                    };
+                MainWindow.QUEUE.Push(cmd);
+            }
+
+            else if (said.Verb == Verbs.SetLoopStart)
+            {
+                Dictionary<string, string> cmd = new Dictionary<string, string>
+                    {
+                        { "Command", "setLoopStart" },
+                    };
+                MainWindow.QUEUE.Push(cmd);
+            }
+
+            else if (said.Verb == Verbs.SetLoopEnd)
+            {
+                Dictionary<string, string> cmd = new Dictionary<string, string>
+                    {
+                        { "Command", "setLoopEnd" },
+                    };
+                MainWindow.QUEUE.Push(cmd);
+            }
+
+
             /*
+            // First check for color, in case both color _and_ shape were both spoken
+            bool foundColor = false;
+            foreach (var phrase in this.colorPhrases)
+            {
+                if (e.Result.Text.Contains(phrase.Key) && (phrase.Value.Verb == Verbs.Colorize))
+                {
+                    said.RgbColor = phrase.Value.Color;
+                    said.Matched = phrase.Key;
+                    foundColor = true;
+                    break;
+                }
+            }
             
             // Look for a match in the order of the lists below, first match wins.
             List<Dictionary<string, WhatSaid>> allDicts = new List<Dictionary<string, WhatSaid>> { this.controlPhrases, this.gameplayPhrases };

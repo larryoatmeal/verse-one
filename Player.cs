@@ -100,7 +100,7 @@ namespace ShapeGame
                 MainWindow.jointQueue.Push(joints);
                 Dictionary<string, string> cmd = new Dictionary<string, string>
                 {
-                    { "Command", "helen won't go to ball with me" },
+                    { "Command", "pause" },
                 };
                 MainWindow.QUEUE.Push(cmd);
             }

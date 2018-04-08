@@ -118,9 +118,9 @@ window.addEventListener('load', function() {
             //]
             //}
 
-            let data = message.Data;
+            let msgDat = message.Data;
             let timestamp = message.Timestamp;
-            let command = data.Command;
+            let command = msgDat.Command;
 
             if(!processedMessages.has(id)){
                 //let command = message.command;
