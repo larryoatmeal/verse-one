@@ -136,7 +136,9 @@ window.addEventListener('load', function() {
 
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+            if (xhttp.readyState == 4){
+            if (xhttp.status == 200) {
                 console.log(this.responseText);
                 let text = this.responseText;
                 let json = JSON.parse(text);
@@ -148,7 +150,9 @@ window.addEventListener('load', function() {
             }else{
 
                 console.log("Error", xhttp.statusText);
+
             }
+        }
         };
         xhttp.open("GET", hostIpInput.value, true);
         xhttp.send();
