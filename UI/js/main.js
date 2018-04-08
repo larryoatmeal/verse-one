@@ -104,11 +104,26 @@ window.addEventListener('load', function() {
 
 
     function processJson(data){
+        data.queue.forEach(message => {
+            let id = message.ID;
 
-        data.forEach(message => {
-            let id = message.id;
+            //{
+            //    "queue": [
+            //    {
+            //        "Timestamp": 3.937,
+            //        "Data": {
+            //            "Command": "Pause"
+            //        }
+            //    }
+            //]
+            //}
+
+            let data = message.Data;
+            let timestamp = message.Timestamp;
+            let command = data.Command;
+
             if(!processedMessages.has(id)){
-                let command = message.command;
+                //let command = message.command;
                 if(command === 'play'){
                     play();
                 }
@@ -133,18 +148,17 @@ window.addEventListener('load', function() {
     setInterval(() => {
         console.log("PING");
 
-
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
 
             if (xhttp.readyState == 4) {
                 if (xhttp.status == 200) {
-                    console.log(this.responseText);
+                    //console.log(this.responseText);
                     let text = this.responseText;
                     let json = JSON.parse(text);
                     processJson(json);
                 } else {
-                    console.log("Error", xhttp.statusText);
+                    //console.log("Error", xhttp.statusText);
                 }
             }
         };
