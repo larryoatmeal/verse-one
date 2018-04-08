@@ -109,8 +109,6 @@ window.addEventListener('load', function() {
         xhttp.onreadystatechange = function() {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 console.log(this.responseText);
-            }else{
-                console.log("Error", xhttp.statusText);
             }
         };
         xhttp.open("GET", hostIpInput.value, true);
