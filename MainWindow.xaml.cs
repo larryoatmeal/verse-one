@@ -26,6 +26,9 @@ namespace ShapeGame
     using Microsoft.Samples.Kinect.WpfViewers;
     using ShapeGame.Speech;
     using ShapeGame.Utils;
+    using System.Net;
+    using System.Text;
+    using WebServer;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -89,6 +92,7 @@ namespace ShapeGame
             this.DataContext = this.KinectSensorManager;
 
             InitializeComponent();
+            StartServer();
 
             this.SensorChooserUI.KinectSensorChooser = sensorChooser;
             sensorChooser.Start();
@@ -98,6 +102,19 @@ namespace ShapeGame
             BindingOperations.SetBinding(this.KinectSensorManager, KinectSensorManager.KinectSensorProperty, kinectSensorBinding);
 
             this.RestoreWindowState();
+        }
+
+        public static string SendResponse(HttpListenerRequest request)
+        {
+            return string.Format("<HTML><BODY>My web page.<br>{0}</BODY></HTML>", DateTime.Now);
+        }
+
+
+        private static void StartServer()
+        {
+            var ws = new WebServer(SendResponse, "http://localhost:8080/test/");
+            ws.Run();
+            Console.WriteLine("A simple webserver.");
         }
 
         public KinectSensorManager KinectSensorManager
