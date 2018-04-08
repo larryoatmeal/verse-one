@@ -107,11 +107,15 @@ window.addEventListener('load', function() {
 
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+            if (xhttp.readyState == 4){
+            if (xhttp.status == 200) {
                 console.log(this.responseText);
-            }else{
-                console.log("Error", xhttp.statusText);
+
+            } else if (xhttp.status != 200) {
+                console.log("ERROR", xhttp.statusText, xhttp.status);
             }
+        }
         };
         xhttp.open("GET", hostIpInput.value, true);
         xhttp.send();

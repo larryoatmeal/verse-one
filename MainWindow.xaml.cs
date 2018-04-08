@@ -81,6 +81,10 @@ namespace ShapeGame
         private int playersAlive;
 
         private SpeechRecognizer mySpeechRecognizer;
+
+
+        public static List<Dictionary<string, string>> QUEUE;
+
         #endregion Private State
 
         #region ctor + Window Events
@@ -106,9 +110,10 @@ namespace ShapeGame
 
         public static string SendResponse(HttpListenerRequest request)
         {
-            return string.Format("<HTML><BODY>My web page.<br>{0}</BODY></HTML>", DateTime.Now);
-        }
+            return string.Format("<HTML><BODY>My web page.<br>{0}!</BODY></HTML>", QUEUE);
 
+            //return string.Format("<HTML><BODY>My web page.<br>{0}</BODY></HTML>", DateTime.Now);
+        }
 
         private static void StartServer()
         {

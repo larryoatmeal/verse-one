@@ -411,7 +411,7 @@ namespace ShapeGame.Speech
                 {
                     said.RgbColor = phrase.Value.Color;
                     said.Matched = phrase.Key;
-                        
+                    found = true;
                     break;
                 }
             }
