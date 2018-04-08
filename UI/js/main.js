@@ -115,7 +115,7 @@ window.addEventListener('load', function() {
         };
         xhttp.open("GET", hostIpInput.value, true);
         xhttp.send();
-    }, loopMs); 
+    }, loopMs);
 
 
 
