@@ -62,64 +62,7 @@ namespace ShapeGame.Speech
 
         private readonly Dictionary<string, WhatSaid> colorPhrases = new Dictionary<string, WhatSaid>
             {
-                { "Every Color", new WhatSaid { Verb = Verbs.RandomColors } },
-                { "All Colors", new WhatSaid { Verb = Verbs.RandomColors } },
-                { "Random Colors", new WhatSaid { Verb = Verbs.RandomColors } },
-                {
-                    "Red",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(240, 60, 60) }
-                    },
-                {
-                    "Green",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(60, 240, 60) }
-                    },
-                {
-                    "Blue",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(60, 60, 240) }
-                    },
-                {
-                    "Yellow",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(240, 240, 60) }
-                    },
-                {
-                    "Orange",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(255, 110, 20) }
-                    },
-                {
-                    "Purple",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(70, 30, 255) }
-                    },
-                {
-                    "Violet",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(160, 30, 245) }
-                    },
-                {
-                    "Pink",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(255, 128, 225) }
-                    },
-                {
-                    "Gray",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(192, 192, 192) }
-                    },
-                {
-                    "Brown",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(130, 80, 50) }
-                    },
-                {
-                    "Dark",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(40, 40, 40) }
-                    },
-                {
-                    "Black", new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(5, 5, 5) }
-                    },
-                {
-                    "Bright",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(240, 240, 240) }
-                    },
-                {
-                    "White",
-                    new WhatSaid { Verb = Verbs.Colorize, Color = System.Windows.Media.Color.FromRgb(255, 255, 255) }
-                    },
+                { "Every Color", new WhatSaid { Verb = Verbs.RandomColors } }
             };
 
         private readonly Dictionary<string, WhatSaid> singlePhrases = new Dictionary<string, WhatSaid>
@@ -341,12 +284,6 @@ namespace ShapeGame.Speech
                 shapes.Add(phrase.Key);
             }
 
-            var colors = new Choices();
-            foreach (var phrase in this.colorPhrases)
-            {
-                colors.Add(phrase.Key);
-            }
-
             var coloredShapeGrammar = new GrammarBuilder();
             coloredShapeGrammar.Append(colors);
             coloredShapeGrammar.Append(shapes);
@@ -411,24 +348,22 @@ namespace ShapeGame.Speech
                 {
                     said.RgbColor = phrase.Value.Color;
                     said.Matched = phrase.Key;
+                    said.Verb = phrase.Value.Verb;
                     found = true;
                     break;
                 }
             }
 
-            /*
-            // First check for color, in case both color _and_ shape were both spoken
-            bool foundColor = false;
-            foreach (var phrase in this.colorPhrases)
+            if (said.Verb == Verbs.Stop)
             {
-                if (e.Result.Text.Contains(phrase.Key) && (phrase.Value.Verb == Verbs.Colorize))
-                {
-                    said.RgbColor = phrase.Value.Color;
-                    said.Matched = phrase.Key;
-                    foundColor = true;
-                    break;
-                }
+                Dictionary<string, string> cmd = new Dictionary<string, string>
+                    {
+                        { "Command", "pause" },
+                    };  
+                MainWindow.QUEUE.Push(cmd);
             }
+
+            /*
             
             // Look for a match in the order of the lists below, first match wins.
             List<Dictionary<string, WhatSaid>> allDicts = new List<Dictionary<string, WhatSaid>> { this.controlPhrases, this.gameplayPhrases };

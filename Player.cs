@@ -15,7 +15,8 @@ namespace ShapeGame
     using System.Windows.Shapes;
     using Microsoft.Kinect;
     using ShapeGame.Utils;
-
+    using System.Diagnostics;
+   
     public class Player
     {
         private const double BoneSize = 0.01;
@@ -31,6 +32,16 @@ namespace ShapeGame
         private Rect playerBounds;
         private System.Windows.Point playerCenter;
         private double playerScale;
+
+        public bool gestureTriggered = false;
+        //public TimedQueue<JointCollection> jointQueue;
+
+        
+        public float windowSize = 3;
+       // Stopwatch stopWatch = new Stopwatch();
+
+
+        //vertical min and max > threshold and horizontal min and max < 
 
         public Player(int skeletonSlot)
         {
@@ -49,6 +60,10 @@ namespace ShapeGame
             this.jointsBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(jointCols[mixR[i]], jointCols[mixG[i]], jointCols[mixB[i]]));
             this.bonesBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(boneCols[mixR[i]], boneCols[mixG[i]], boneCols[mixB[i]]));
             this.LastUpdated = DateTime.Now;
+            //this.stopWatch = new Stopwatch();
+            //this.stopWatch.Start();
+
+            //jointQueue = new TimedQueue<JointCollection>(windowSize);
         }
 
         public bool IsAlive { get; set; }
@@ -76,19 +91,19 @@ namespace ShapeGame
             this.playerScale = Math.Min(this.playerBounds.Width, this.playerBounds.Height / 2);
         }
 
-        public string DetectGesture(Microsoft.Kinect.JointCollection joints)
+        public void DetectGesture(Microsoft.Kinect.JointCollection joints)
         {
             var leftHand = Microsoft.Kinect.JointType.HandLeft;
             var elbowLeft = Microsoft.Kinect.JointType.ElbowLeft;
-            if (joints[leftHand].Position.Y > joints[elbowLeft].Position.Y)
+            if (joints[leftHand].Position.Y > joints[elbowLeft].Position.Y && joints[leftHand].Position.X > joints[elbowLeft].Position.X)
             {
-                if (joints[leftHand].Position.X > joints[elbowLeft].Position.X)
+                MainWindow.jointQueue.Push(joints);
+                Dictionary<string, string> cmd = new Dictionary<string, string>
                 {
-                    Console.Write("raised");
-                    return "raised";
-                }
+                    { "Command", "helen won't go to ball with me" },
+                };
+                MainWindow.QUEUE.Push(cmd);
             }
-                return "";
         }
 
         public void UpdateBonePosition(Microsoft.Kinect.JointCollection joints, JointType j1, JointType j2)

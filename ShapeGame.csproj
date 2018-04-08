@@ -96,6 +96,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="SpeechRecognizer.cs" />
+    <Compile Include="TimedEvent.cs" />
+    <Compile Include="TimedQueue.cs" />
     <Compile Include="WebServer.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

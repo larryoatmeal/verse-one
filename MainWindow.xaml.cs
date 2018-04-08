@@ -29,6 +29,8 @@ namespace ShapeGame
     using System.Net;
     using System.Text;
     using WebServer;
+    using Newtonsoft.Json;
+    using System.Diagnostics;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -83,7 +85,14 @@ namespace ShapeGame
         private SpeechRecognizer mySpeechRecognizer;
 
 
-        public static List<Dictionary<string, string>> QUEUE;
+        public static TimedQueue<Dictionary<string, string>> QUEUE;
+        public static TimedQueue<JointCollection> jointQueue;
+
+        private float jointWindowSize = 3;
+        private static float messageWindowSize = 2;
+        public static Stopwatch stopWatch = new Stopwatch();
+        private static int ID = 0;
+
 
         #endregion Private State
 
@@ -97,6 +106,7 @@ namespace ShapeGame
 
             InitializeComponent();
             StartServer();
+            
 
             this.SensorChooserUI.KinectSensorChooser = sensorChooser;
             sensorChooser.Start();
@@ -106,17 +116,22 @@ namespace ShapeGame
             BindingOperations.SetBinding(this.KinectSensorManager, KinectSensorManager.KinectSensorProperty, kinectSensorBinding);
 
             this.RestoreWindowState();
+            jointQueue = new TimedQueue<JointCollection>(jointWindowSize);
+
+            stopWatch.Start();
+
         }
 
         public static string SendResponse(HttpListenerRequest request)
         {
-            return string.Format("<HTML><BODY>My web page.<br>{0}!</BODY></HTML>", QUEUE);
-
-            //return string.Format("<HTML><BODY>My web page.<br>{0}</BODY></HTML>", DateTime.Now);
+            string json = JsonConvert.SerializeObject(QUEUE, Formatting.Indented);
+            return json;
         }
 
         private static void StartServer()
         {
+            QUEUE = new TimedQueue<Dictionary<string, string>>(messageWindowSize);
+
             var ws = new WebServer(SendResponse, "http://localhost:8080/test/");
             ws.Run();
             Console.WriteLine("A simple webserver.");
