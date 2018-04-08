@@ -141,20 +141,9 @@ namespace ShapeGame.Speech
 
         private readonly Dictionary<string, WhatSaid> controlPhrases = new Dictionary<string, WhatSaid>
             {
-                { "Speed Up", new WhatSaid { Verb = Verbs.Faster } },
-                { "Slow Down", new WhatSaid { Verb = Verbs.Slower } },
-                { "Reset", new WhatSaid { Verb = Verbs.Reset } },
-                { "Clear", new WhatSaid { Verb = Verbs.Reset } },
-                { "Stop", new WhatSaid { Verb = Verbs.Pause } },
-                { "Pause Game", new WhatSaid { Verb = Verbs.Pause } },
-                { "Freeze", new WhatSaid { Verb = Verbs.Pause } },
-                { "Unfreeze", new WhatSaid { Verb = Verbs.Resume } },
-                { "Resume", new WhatSaid { Verb = Verbs.Resume } },
-                { "Continue", new WhatSaid { Verb = Verbs.Resume } },
-                { "Play", new WhatSaid { Verb = Verbs.Resume } },
-                { "Start", new WhatSaid { Verb = Verbs.Resume } },
-                { "Go", new WhatSaid { Verb = Verbs.Resume } },
+                { "Stop", new WhatSaid { Verb = Verbs.Stop } },
             };
+
 
         private SpeechRecognitionEngine sre;
         private KinectAudioSource kinectAudioSource;
@@ -187,7 +176,8 @@ namespace ShapeGame.Speech
             ShapesAndColors,
             Reset,
             Pause,
-            Resume
+            Resume,
+            Stop
         }
 
         public EchoCancellationMode EchoCancellationMode
@@ -326,6 +316,13 @@ namespace ShapeGame.Speech
         private void LoadGrammar(SpeechRecognitionEngine speechRecognitionEngine)
         {
             // Build a simple grammar of shapes, colors, and some simple program control
+
+            var controls = new Choices();
+            foreach (var phrase in this.controlPhrases)
+            {
+                controls.Add(phrase.Key);
+            }
+
             var single = new Choices();
             foreach (var phrase in this.singlePhrases)
             {
@@ -407,7 +404,19 @@ namespace ShapeGame.Speech
 
             var said = new SaidSomethingEventArgs
                 { RgbColor = System.Windows.Media.Color.FromRgb(0, 0, 0), Shape = 0, Verb = 0, Phrase = e.Result.Text };
+            bool found = false;
+            foreach (var phrase in this.controlPhrases)
+            {
+                if (e.Result.Text.Contains(phrase.Key))
+                {
+                    said.RgbColor = phrase.Value.Color;
+                    said.Matched = phrase.Key;
+                    
+                    break;
+                }
+            }
 
+            /*
             // First check for color, in case both color _and_ shape were both spoken
             bool foundColor = false;
             foreach (var phrase in this.colorPhrases)
@@ -420,9 +429,9 @@ namespace ShapeGame.Speech
                     break;
                 }
             }
-
+            
             // Look for a match in the order of the lists below, first match wins.
-            List<Dictionary<string, WhatSaid>> allDicts = new List<Dictionary<string, WhatSaid>> { this.gameplayPhrases, this.shapePhrases, this.colorPhrases, this.singlePhrases };
+            List<Dictionary<string, WhatSaid>> allDicts = new List<Dictionary<string, WhatSaid>> { this.controlPhrases, this.gameplayPhrases };
 
             bool found = false;
             for (int i = 0; i < allDicts.Count && !found; ++i)
@@ -449,7 +458,7 @@ namespace ShapeGame.Speech
                     }
                 }
             }
-
+            */
             if (!found)
             {
                 return;
