@@ -23,6 +23,7 @@ window.addEventListener('load', function() {
     let loopEndSetBtn = document.getElementById("loopEndSetBtn");
     let hostIpInput = document.getElementById("hostIp");
 
+    const processedMessages = new Set();
 
     //let hostIp = hostIpInput.value;
     //console.log("Pinging", hostIp);
@@ -36,9 +37,12 @@ window.addEventListener('load', function() {
     //API
     function play(){
 
+        console.log("PLAY");
+        wavesurfer.play();
     }
     function pause(){
-
+        console.log("PAUSE");
+        wavesurfer.pause();
     }
     function reset(){
         isLooping = false;
@@ -76,13 +80,10 @@ window.addEventListener('load', function() {
     });
 
     playBtn.addEventListener("click", () => {
-        console.log("PLAY");
-        wavesurfer.play();
-
+        play();
     });
     pauseBtn.addEventListener("click", () => {
-        console.log("PAUSE");
-        wavesurfer.pause();
+        pause();
     });
     loopOnBtn.addEventListener("click", () => {
         //console.log("PAUSE");
@@ -101,6 +102,34 @@ window.addEventListener('load', function() {
         setLoopEnd();
     });
 
+
+    function processJson(data){
+
+        data.forEach(message => {
+            let id = message.id;
+            if(!processedMessages.has(id)){
+                let command = message.command;
+                if(command === 'play'){
+                    play();
+                }
+                else if(command === 'pause'){
+                    pause();
+                }
+                else if(command === 'loopOn'){
+                    loopOn();
+                }else if(command === 'loopOff'){
+                    loopOff();
+                }
+                else if(command === 'setLoopStart'){
+                    setLoopStart();
+                }else if(command === 'setLoopEnd'){
+                    setLoopEnd();
+                }
+                processedMessages.add(id);
+            }
+        });
+    }
+
     setInterval(() => {
         console.log("PING");
 
@@ -109,6 +138,16 @@ window.addEventListener('load', function() {
         xhttp.onreadystatechange = function() {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 console.log(this.responseText);
+                let text = this.responseText;
+                let json = JSON.parse(text);
+
+
+                processJson(json);
+
+
+            }else{
+
+                console.log("Error", xhttp.statusText);
             }
         };
         xhttp.open("GET", hostIpInput.value, true);
