@@ -25,7 +25,12 @@
     <input type="text" id="hostIp" value="http://localhost:8080/test/"/>
   </label>
 
-  <div id="waveform"></div>
+  <div id="waveform">
+    <!--<div style="background-color: green; position: relative; overflow-x: auto; width: 100px; height: 100px; left: 100px;">-->
+    <!--</div>-->
+
+  </div>
+
   <div>
     <button id="playBtn">Play</button>
     <button id="pauseBtn">Pause</button>
@@ -35,5 +40,10 @@
     <button id="loopEndSetBtn">Loop End Set</button>
 
   </div>
+
+  <label>Choose Song: </label>
+  <select id="songList"></select>
+  <h1 id="loadingBeatDetect">PERFORMING BEAT DETECTION, PLEASE WAIT...</h1>
+  <h1 id="loadingRegular">LOADING SONG </h1>
 </body>
 </html>
