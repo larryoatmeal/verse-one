@@ -1,9 +1,15 @@
-﻿using Microsoft.Kinect;
+﻿//------------------------------------------------------------------------------
+// <copyright file="Player.cs" company="Microsoft">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//------------------------------------------------------------------------------
+
+using Microsoft.Kinect;
 using System;
 
 namespace ShapeGame
 {
-    public class WaveGesture
+    public class CrossGesture
     {
 
         readonly int WINDOW_SIZE = 50;
@@ -17,19 +23,17 @@ namespace ShapeGame
 
         public event EventHandler GestureRecognized;
 
-        public WaveGesture()
+        public CrossGesture()
         {
-            WaveSegment1 waveRightSegment1 = new WaveSegment1();
-            WaveSegment2 waveRightSegment2 = new WaveSegment2();
+            CrossSegment1 crossSegment1 = new CrossSegment1();
+            CrossSegment2 crossSegment2 = new CrossSegment2();
+            CrossSegment3 crossSegment3 = new CrossSegment3();
 
             _segments = new IGestureSegment[]
             {
-                waveRightSegment1,
-                waveRightSegment2,
-                waveRightSegment1,
-                waveRightSegment2,
-                waveRightSegment1,
-                waveRightSegment2
+                crossSegment1,
+                crossSegment2,
+                crossSegment3
             };
         }
 
@@ -68,7 +72,7 @@ namespace ShapeGame
                     if (currentTime - lastGestureTime < 2 && prevResult == GesturePartResult.Succeeded) //we still havent left prev state
                     {
                         Console.WriteLine("holding gesture");
-                    } 
+                    }
                     else
                     {
                         Reset();
@@ -95,5 +99,5 @@ namespace ShapeGame
             lastGestureTime = 0.0f;
         }
     }
-    
+
 }

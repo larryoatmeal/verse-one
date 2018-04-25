@@ -1,11 +1,13 @@
-﻿using Microsoft.Kinect;
+﻿
+using Microsoft.Kinect;
 using System;
 
 namespace ShapeGame
 {
-    public class WaveGesture
+    public class RaiseRightHandGesture
     {
 
+        
         readonly int WINDOW_SIZE = 50;
 
         IGestureSegment[] _segments;
@@ -17,19 +19,19 @@ namespace ShapeGame
 
         public event EventHandler GestureRecognized;
 
-        public WaveGesture()
+        public RaiseRightHandGesture()
         {
-            WaveSegment1 waveRightSegment1 = new WaveSegment1();
-            WaveSegment2 waveRightSegment2 = new WaveSegment2();
+            RaiseRightHandSegment1 raiseRightHandSegment1 = new RaiseRightHandSegment1();
+            RaiseRightHandSegment2 raiseRightHandSegment2 = new RaiseRightHandSegment2();
+            RaiseRightHandSegment3 raiseRightHandSegment3 = new RaiseRightHandSegment3();
+            RaiseRightHandSegment4 raiseRightHandSegment4 = new RaiseRightHandSegment4();
 
             _segments = new IGestureSegment[]
             {
-                waveRightSegment1,
-                waveRightSegment2,
-                waveRightSegment1,
-                waveRightSegment2,
-                waveRightSegment1,
-                waveRightSegment2
+                raiseRightHandSegment1,
+                raiseRightHandSegment2,
+                raiseRightHandSegment3,
+                raiseRightHandSegment4
             };
         }
 
@@ -68,7 +70,7 @@ namespace ShapeGame
                     if (currentTime - lastGestureTime < 2 && prevResult == GesturePartResult.Succeeded) //we still havent left prev state
                     {
                         Console.WriteLine("holding gesture");
-                    } 
+                    }
                     else
                     {
                         Reset();
@@ -95,5 +97,5 @@ namespace ShapeGame
             lastGestureTime = 0.0f;
         }
     }
-    
+
 }

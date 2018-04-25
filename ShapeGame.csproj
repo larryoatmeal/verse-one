@@ -95,7 +95,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CrossGesture.cs" />
     <Compile Include="IGestureSegment.cs" />
+    <Compile Include="LoopGesture.cs" />
+    <Compile Include="RaiseLeftHandGesture.cs" />
+    <Compile Include="RaiseRightHandGesture.cs" />
     <Compile Include="SpeechRecognizer.cs" />
     <Compile Include="TimedEvent.cs" />
     <Compile Include="TimedQueue.cs" />
@@ -185,6 +189,9 @@
       <Project>{C6F9C31B-6130-4443-A5CC-EF0664552ECD}</Project>
       <Name>Microsoft.Kinect.Toolkit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bell.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

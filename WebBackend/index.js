@@ -3,7 +3,7 @@ const app = express()
 const port = 3000
 const path = require('path')
 const fs = require('fs');
-const { exec } = require('child_process');
+const exec = require('child_process');
 const glob = require("glob")
 
 // app.get('/', (request, response) => {

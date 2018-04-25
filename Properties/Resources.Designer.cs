@@ -63,6 +63,15 @@ namespace ShapeGame.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
+        public static System.IO.UnmanagedMemoryStream Bell {
+            get {
+                return ResourceManager.GetStream("Bell", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
         public static System.IO.UnmanagedMemoryStream Hit_2 {
             get {
                 return ResourceManager.GetStream("Hit_2", resourceCulture);

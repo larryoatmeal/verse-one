@@ -3,8 +3,9 @@ using System;
 
 namespace ShapeGame
 {
-    public class WaveGesture
+    public class LoopGesture
     {
+
 
         readonly int WINDOW_SIZE = 50;
 
@@ -17,19 +18,11 @@ namespace ShapeGame
 
         public event EventHandler GestureRecognized;
 
-        public WaveGesture()
+        public LoopGesture()
         {
-            WaveSegment1 waveRightSegment1 = new WaveSegment1();
-            WaveSegment2 waveRightSegment2 = new WaveSegment2();
 
             _segments = new IGestureSegment[]
             {
-                waveRightSegment1,
-                waveRightSegment2,
-                waveRightSegment1,
-                waveRightSegment2,
-                waveRightSegment1,
-                waveRightSegment2
             };
         }
 
@@ -68,7 +61,7 @@ namespace ShapeGame
                     if (currentTime - lastGestureTime < 2 && prevResult == GesturePartResult.Succeeded) //we still havent left prev state
                     {
                         Console.WriteLine("holding gesture");
-                    } 
+                    }
                     else
                     {
                         Reset();
@@ -95,5 +88,5 @@ namespace ShapeGame
             lastGestureTime = 0.0f;
         }
     }
-    
+
 }

@@ -109,6 +109,7 @@ namespace ShapeGame
             var angleList = angleBuffer.GetData();
             var angle = Math.Atan2(diffY, diffX) + 2 * Math.PI;
     
+             
             //reset window 
             if (angleList.Count == 0)
             {
@@ -124,6 +125,8 @@ namespace ShapeGame
                 }
             }
             angle += offset;
+
+
 
             //if (leftHand.Position.Y > elbowLeft.Position.Y && leftHand.Position.X > elbowLeft.Position.X)
             //{
