@@ -9,14 +9,19 @@ window.addEventListener('load', function() {
         waveColor: 'violet',
         progressColor: 'purple'
     });
+    let divA = null;
+    let divB = null;
 
 
     function loadAudio(name){
 
+        loopOff();
+        pause();
+
         wavesurfer.load('audio/' + name + '.wav');
-        isLooping = false;
-        loopStart = 0;
-        loopEnd = 1000;
+        //isLooping = false;
+        //loopStart = 0;
+        //loopEnd = 1000;
     }
 
     let beatData = null;
@@ -110,14 +115,47 @@ window.addEventListener('load', function() {
     //API
     //loadAudio('snow');
 
+    document.getElementById("playStopButton").addEventListener("click", togglePlay)
+    var cycleButton = document.getElementById("cycleOnOffButton");
+    cycleButton.addEventListener("click", toggleLoop)
+
+    document.getElementById("setStartButton").addEventListener('click', setLoopStart);
+    document.getElementById("setEndButton").addEventListener('click', setLoopEnd);
+    let playIcon = document.getElementById('playIcon');
+    let pauseIcon = document.getElementById('pauseIcon');
+    function togglePlay(){
+
+
+        if(wavesurfer.isPlaying()){
+            pause();
+
+
+        }else{
+            play();
+
+
+        }
+    }
+    function toggleLoop(){
+        if(isLooping){
+            loopOff();
+        }else{
+            loopOn();
+        }
+    }
+
     function play(){
 
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = '';
         console.log("PLAY");
         wavesurfer.play();
     }
     function pause(){
         console.log("PAUSE");
         wavesurfer.pause();
+        playIcon.style.display = '';
+        pauseIcon.style.display = 'none';
     }
     function reset(){
         isLooping = false;
@@ -133,8 +171,12 @@ window.addEventListener('load', function() {
         if(beatAlign){
             loopStart = aligned;
         }
+
+
+        setTimePosition(divA, loopStart);
+
     }
-    function setLoopEnd(ts){
+    function setLoopEnd(ts, bypassLoopOn){
         loopEnd = wavesurfer.getCurrentTime();
 
         let aligned = findNearestBeat(loopEnd);
@@ -142,18 +184,36 @@ window.addEventListener('load', function() {
         if(beatAlign){
             loopEnd = aligned;
         }
-        isLooping = true;
+        //isLooping = true;
+        //if(loopStart){
+        if(!bypassLoopOn){
+            loopOn();
+        }
+        setTimePosition(divB, loopEnd);
+
+        //}
     }
     function loopOn(){
         isLooping = true;
+        cycleButton.classList.remove('notActive');
+
     }
     function loopOff(){
         isLooping = false;
+        cycleButton.classList.add('notActive');
     }
 
     let deleteMe = [];
 
-    function placeBeatMarkers(wave){
+    function setTimePosition(elem, time){
+        let waveForm = document.getElementById("waveform");
+
+        let wave = waveForm.getElementsByTagName("wave")[0];
+        let totalWidth = wave.clientWidth;
+        elem.style.left = totalWidth * time/wavesurfer.getDuration() + "px";
+    }
+
+    function placeMarkers(wave){
 
         console.log(beatData);
 
@@ -176,9 +236,44 @@ window.addEventListener('load', function() {
             div.style.left = totalWidth * beat/wavesurfer.getDuration() + "px";
             console.log(div.style.left);
 
-            wave.appendChild(div);
-            deleteMe.push(div);
+            //wave.appendChild(div);
+            //deleteMe.push(div);
         });
+
+
+        if(!divA){
+            divA = document.createElement("div");
+            divA.classList.add("btn");
+            divA.classList.add("btn-primary");
+            divA.textContent = "A";
+            divA.style.position = 'absolute';
+            wave.appendChild(divA);
+            setTimePosition(divA, loopStart);
+
+        }
+
+        if(!divB){
+            divB = document.createElement("div");
+            divB.classList.add("btn");
+            divB.classList.add("btn-info");
+            divB.textContent = "B";
+            divB.style.position = 'absolute';
+            wave.appendChild(divB);
+            console.log(loopEnd);
+            setTimePosition(divB, loopEnd);
+        }
+
+
+        //div.style.width = "2px";
+        //div.style.height = "100%";
+        //div.style.background = "red";
+        //div.style.color = "white";
+        ////div.innerHTML = "Hello";
+        //div.style.position = "absolute";
+
+
+        //div.style.left = totalWidth * beat/wavesurfer.getDuration() + "px";
+        //console.log(div.style.left);
 
     }
 
@@ -190,13 +285,16 @@ window.addEventListener('load', function() {
 
         let wave = waveForm.getElementsByTagName("wave")[0];
         console.log(wave);
+        //setLoopEnd(wavesurfer.getDuration(), false);
 
-        placeBeatMarkers(wave);
+        loopEnd = wavesurfer.getDuration();
+        placeMarkers(wave);
 
         let duration = wavesurfer.getDuration();
         console.log(duration);
 
         //console.log(waveForm.getElementsByTagName("wave"));
+
 
 
         //wavesurfer.zoom(20);
@@ -230,6 +328,7 @@ window.addEventListener('load', function() {
     loopOffBtn.addEventListener("click", () => {
         //console.log("PAUSE");
         loopOff();
+
         //wavesurfer.pause();
     });
     loopStartSetBtn.addEventListener("click", ()=>{
@@ -269,7 +368,15 @@ window.addEventListener('load', function() {
                 }
                 else if(command === 'loopOn'){
                     loopOn();
-                }else if(command === 'loopOff'){
+
+                }
+                else if(command === 'togglePlay'){
+                    togglePlay();
+                }
+                else if(command === 'toggleLoop'){
+                    toggleLoop();
+                }
+                else if(command === 'loopOff'){
                     loopOff();
                 }
                 else if(command === 'setLoopStart'){

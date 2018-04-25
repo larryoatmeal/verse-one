@@ -4,11 +4,13 @@
 <head>
   <meta charset="utf-8">
 
-  <title>The HTML5 Herald</title>
-  <meta name="description" content="The HTML5 Herald">
+  <title>Verse One</title>
+  <meta name="description" content="Verse One">
   <meta name="author" content="SitePoint">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
@@ -18,20 +20,26 @@
 </head>
 
 <body>
+<div class="container">
+
   <h1>Verse One</h1>
 
-  <label>
+  <label style="display: none">
     Host IP
     <input type="text" id="hostIp" value="http://localhost:8080/test/"/>
   </label>
 
+  <div class="songSelectContainer">
+    <label for="songList">Choose Song: </label><select id="songList"></select>
+  </div>
   <div id="waveform">
     <!--<div style="background-color: green; position: relative; overflow-x: auto; width: 100px; height: 100px; left: 100px;">-->
     <!--</div>-->
 
   </div>
 
-  <div>
+
+  <div style="display: none">
     <button id="playBtn">Play</button>
     <button id="pauseBtn">Pause</button>
     <button id="loopOnBtn">Loop On</button>
@@ -40,10 +48,19 @@
     <button id="loopEndSetBtn">Loop End Set</button>
 
   </div>
+  <div class="controlContainer" >
+    <button class = "controlButton btn btn-success btn-lg" id="playStopButton"><i id="playIcon" class="fas fa-play"></i><i style="display: none" id="pauseIcon" class="fas fa-pause"></i></button>
+    <button class = "controlButton btn btn-warning btn-lg notActive" id="cycleOnOffButton"><i class="fas fa-undo-alt"></i></button>
+    <button class = "controlButton btn btn-primary btn-lg" id="setStartButton">A</button>
+    <button class = "controlButton btn btn-info btn-lg" id="setEndButton">B</button>
+  </div>
 
-  <label>Choose Song: </label>
-  <select id="songList"></select>
+
+
   <h1 id="loadingBeatDetect">PERFORMING BEAT DETECTION, PLEASE WAIT...</h1>
   <h1 id="loadingRegular">LOADING SONG </h1>
+</div>
+
 </body>
+
 </html>
