@@ -83,6 +83,7 @@ namespace ShapeGame
         private int playersAlive;
 
         private SpeechRecognizer mySpeechRecognizer;
+        static WaveGesture _gesture = new WaveGesture();
 
 
         public static TimedQueue<Dictionary<string, string>> QUEUE;
@@ -189,7 +190,6 @@ namespace ShapeGame
             myGameThread.SetApartmentState(ApartmentState.STA);
             myGameThread.Start();
 
-            FlyingText.NewFlyingText(this.screenRect.Width / 30, new Point(this.screenRect.Width / 2, this.screenRect.Height / 2), "Shapes!");
         }
 
         private void WindowClosing(object sender, CancelEventArgs e)
@@ -245,6 +245,8 @@ namespace ShapeGame
                                              };
             kinectSensorManager.SkeletonStreamEnabled = true;
             kinectSensorManager.KinectSensorEnabled = true;
+
+            _gesture.GestureRecognized += WaveRecognized;
 
             if (!kinectSensorManager.KinectSensorAppConflict)
             {
@@ -319,7 +321,9 @@ namespace ShapeGame
                             {
                                 player.IsAlive = true;
 
-                                player.DetectGesture(skeleton.Joints);
+                                _gesture.Update(skeleton);
+
+                                //player.DetectGesture(skeleton.Joints);
                                 // Head, hands, feet (hit testing happens in order here)
                                 player.UpdateJointPosition(skeleton.Joints, JointType.Head);
                                 player.UpdateJointPosition(skeleton.Joints, JointType.HandLeft);
@@ -362,6 +366,16 @@ namespace ShapeGame
                     }
                 }
             }
+        }
+
+        static void WaveRecognized(object sender, EventArgs e)
+        {
+            Console.WriteLine("waved");
+            Dictionary<string, string> cmd = new Dictionary<string, string>
+                {
+                    { "Command", "pause" },
+                };
+            MainWindow.QUEUE.Push(cmd);
         }
 
         private void CheckPlayers()
@@ -527,8 +541,8 @@ namespace ShapeGame
             foreach (var player in this.players)
             {
                 player.Value.Draw(playfield.Children);
+                
             }
-
             BannerText.Draw(playfield.Children);
             FlyingText.Draw(playfield.Children);
 
