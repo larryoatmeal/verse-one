@@ -11,9 +11,81 @@ window.addEventListener('load', function() {
     });
 
 
+    function loadAudio(name){
+
+        wavesurfer.load('audio/' + name + '.wav');
+        isLooping = false;
+        loopStart = 0;
+        loopEnd = 1000;
+    }
+
+    let beatData = null;
+
+    let loadReg = document.getElementById("loadingRegular");
+    let loadBeat = document.getElementById("loadingBeatDetect");
+
+    loadReg.style.display = 'none';
+    loadBeat.style.display = 'none';
+
+    getRequest('songlist', (songs) => {
+        console.log(songs);
+        let select = document.getElementById('songList');
+        songs.forEach(song => {
+            let opt = document.createElement('option');
+            opt.value = song;
+            opt.innerHTML = song;
+            select.appendChild(opt)
+        });
+        select.addEventListener("change", () =>{
+            //var selectedText = select.options[select.selectedIndex].innerHTML;
+            var selectedValue = select.value;
+            loadSong(selectedValue);
+        });
+
+        loadSong(songs[0]);
+    });
+
+    function loadSong(name){
+        loadBeat.style.display = '';
+        //loadReg.style.display = 'none';
+
+        getRequest('beatDetect/' + name, (data) => {
+            loadBeat.style.display = 'none';
+
+            console.log(data);
+            beatData = data;
+            loadAudio(name);
+        })
+    }
+
+    function argMin(arr) {
+        if (arr.length === 0) {
+            return -1;
+        }
+        var max = arr[0];//these variables should be min haha
+        var maxIndex = 0;
+
+        for (var i = 1; i < arr.length; i++) {
+            if (arr[i] < max) {
+                maxIndex = i;
+                max = arr[i];
+            }
+        }
+
+        return maxIndex;
+    }
+    function findNearestBeat(time){
+
+        let diffs = beatData.beats.map(beat => {
+            return Math.abs(beat - time);
+        });
+        let closest = beatData.beats[argMin(diffs)];
+        return closest;
+    }
 
 
-    wavesurfer.load('audio/click.mp3');
+
+
 
     let playBtn = document.getElementById("playBtn");
     let pauseBtn = document.getElementById("pauseBtn");
@@ -34,7 +106,10 @@ window.addEventListener('load', function() {
 
     let loopStart = 0;
     let loopEnd = 1000;
+    let beatAlign = true;
     //API
+    //loadAudio('snow');
+
     function play(){
 
         console.log("PLAY");
@@ -50,9 +125,24 @@ window.addEventListener('load', function() {
     }
     function setLoopStart(ts){
         loopStart = wavesurfer.getCurrentTime();
+
+        let aligned = findNearestBeat(loopStart);
+        console.log("User", loopStart);
+
+        console.log(aligned);
+        if(beatAlign){
+            loopStart = aligned;
+        }
     }
     function setLoopEnd(ts){
         loopEnd = wavesurfer.getCurrentTime();
+
+        let aligned = findNearestBeat(loopEnd);
+
+        if(beatAlign){
+            loopEnd = aligned;
+        }
+        isLooping = true;
     }
     function loopOn(){
         isLooping = true;
@@ -61,8 +151,55 @@ window.addEventListener('load', function() {
         isLooping = false;
     }
 
+    let deleteMe = [];
+
+    function placeBeatMarkers(wave){
+
+        console.log(beatData);
+
+        var totalWidth = wave.scrollWidth;
+        console.log(totalWidth);
+
+        deleteMe.forEach(div => {
+            div.remove();
+        });
+        deleteMe = [];
+
+        beatData.beats.forEach((beat) => {
+            let div = document.createElement("div");
+            div.style.width = "2px";
+            div.style.height = "100%";
+            div.style.background = "red";
+            div.style.color = "white";
+            //div.innerHTML = "Hello";
+            div.style.position = "absolute";
+            div.style.left = totalWidth * beat/wavesurfer.getDuration() + "px";
+            console.log(div.style.left);
+
+            wave.appendChild(div);
+            deleteMe.push(div);
+        });
+
+    }
+
+
     wavesurfer.on('ready', function () {
         console.log("AUDIO READY");
+
+        let waveForm = document.getElementById("waveform");
+
+        let wave = waveForm.getElementsByTagName("wave")[0];
+        console.log(wave);
+
+        placeBeatMarkers(wave);
+
+        let duration = wavesurfer.getDuration();
+        console.log(duration);
+
+        //console.log(waveForm.getElementsByTagName("wave"));
+
+
+        //wavesurfer.zoom(20);
     });
     wavesurfer.on('audioprocess', function () {
         if(wavesurfer.isPlaying()){
@@ -146,7 +283,7 @@ window.addEventListener('load', function() {
     }
 
     setInterval(() => {
-        console.log("PING");
+        //console.log("PING");
 
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
@@ -166,6 +303,26 @@ window.addEventListener('load', function() {
         xhttp.send();
     }, loopMs);
 
+
+    function getRequest(url, cb){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+
+            if (xhttp.readyState == 4) {
+                if (xhttp.status == 200) {
+                    //console.log(this.responseText);
+                    //let text = this.responseText;
+                    //let json = JSON.parse(text);
+                    //processJson(json);
+                    cb(JSON.parse(this.responseText));
+                } else {
+                    //console.log("Error", xhttp.statusText);
+                }
+            }
+        };
+        xhttp.open("GET", url, true);
+        xhttp.send();
+    }
 
 
 });
