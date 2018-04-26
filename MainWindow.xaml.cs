@@ -62,6 +62,7 @@ namespace ShapeGame
         private readonly SoundPlayer hitSound = new SoundPlayer();
         private readonly SoundPlayer squeezeSound = new SoundPlayer();
         private static readonly SoundPlayer bellSound = new SoundPlayer();
+        private static readonly SoundPlayer scratchSound = new SoundPlayer();
 
         private readonly KinectSensorChooser sensorChooser = new KinectSensorChooser();
 
@@ -89,6 +90,8 @@ namespace ShapeGame
         static RaiseLeftHandGesture raiseLeftHandGesture = new RaiseLeftHandGesture();
         static RaiseRightHandGesture raiseRightHandGesture = new RaiseRightHandGesture();
         static WaveGesture waveGesture = new WaveGesture();
+        static MoveBackGesture moveBackGesture = new MoveBackGesture();
+        static MoveForwardGesture moveForwardGesture = new MoveForwardGesture();
 
 
         public static TimedQueue<Dictionary<string, string>> QUEUE;
@@ -188,8 +191,8 @@ namespace ShapeGame
             this.hitSound.Stream = Properties.Resources.Hit_2;
             this.squeezeSound.Stream = Properties.Resources.Squeeze;
             bellSound.Stream = Properties.Resources.Bell;
+            scratchSound.Stream = Properties.Resources.scratch;
 
-            this.popSound.Play();
 
             TimeBeginPeriod(TimerResolution);
             var myGameThread = new Thread(this.GameThread);
@@ -256,6 +259,8 @@ namespace ShapeGame
             raiseLeftHandGesture.GestureRecognized += RaiseLeftHandGestureRecognized;
             raiseRightHandGesture.GestureRecognized += RaiseRightHandGestureRecognized;
             waveGesture.GestureRecognized += WaveGestureRecognized;
+            moveBackGesture.GestureRecognized += MoveBackGestureRecognized;
+            moveForwardGesture.GestureRecognized += MoveForwardGestureRecognized;
 
 
             if (!kinectSensorManager.KinectSensorAppConflict)
@@ -335,6 +340,8 @@ namespace ShapeGame
                                 raiseRightHandGesture.Update(skeleton);
                                 raiseLeftHandGesture.Update(skeleton);
                                 waveGesture.Update(skeleton);
+                                moveBackGesture.Update(skeleton);
+                                moveForwardGesture.Update(skeleton);
 
                                 //player.DetectGesture(skeleton.Joints);
                                 // Head, hands, feet (hit testing happens in order here)
@@ -373,17 +380,20 @@ namespace ShapeGame
                                 // Spine
                                 player.UpdateBonePosition(skeleton.Joints, JointType.HipCenter, JointType.ShoulderCenter);
                             }
+
                         }
 
                         skeletonSlot++;
                     }
                 }
+
+
             }
         }
 
         static void CrossGestureRecognized(object sender, EventArgs e)
         {
-            Console.WriteLine("cross");
+            Console.WriteLine("CROSS");
             bellSound.Play();
 
             Dictionary<string, string> cmd = new Dictionary<string, string>
@@ -391,10 +401,6 @@ namespace ShapeGame
                     { "Command", "togglePlay" },
                 };
             MainWindow.QUEUE.Push(cmd);
-            raiseLeftHandGesture.Reset();
-            raiseRightHandGesture.Reset();
-            waveGesture.Reset();
-
         }
 
         static void RaiseRightHandGestureRecognized(object sender, EventArgs e)
@@ -407,25 +413,23 @@ namespace ShapeGame
                     { "Command", "setLoopEnd" },
                 };
             MainWindow.QUEUE.Push(cmd);
-            raiseLeftHandGesture.Reset();
-            crossGesture.Reset();
-            waveGesture.Reset();
+            ResetAllGestures();
+
 
         }
 
         static void WaveGestureRecognized(object sender, EventArgs e)
         {
             Console.WriteLine("waved aka loop");
-            bellSound.Play();
+            scratchSound.Play();
 
             Dictionary<string, string> cmd = new Dictionary<string, string>
                 {
                     { "Command", "toggleLoop" },
                 };
             MainWindow.QUEUE.Push(cmd);
-            raiseLeftHandGesture.Reset();
-            raiseRightHandGesture.Reset();
-            crossGesture.Reset();
+            ResetAllGestures();
+
         }
 
         static void RaiseLeftHandGestureRecognized(object sender, EventArgs e)
@@ -438,10 +442,43 @@ namespace ShapeGame
                     { "Command", "setLoopStart" },
                 };
             MainWindow.QUEUE.Push(cmd);
+            ResetAllGestures();
+        }
+
+        static void MoveBackGestureRecognized(object sender, EventArgs e)
+        {
+            Console.WriteLine("move back measure gesture recognized");
+            scratchSound.Play();
+
+            Dictionary<string, string> cmd = new Dictionary<string, string>
+                {
+                    { "Command", "reverse" },
+                };
+            MainWindow.QUEUE.Push(cmd);
+            ResetAllGestures();
+        }
+
+        static void MoveForwardGestureRecognized(object sender, EventArgs e)
+        {
+            Console.WriteLine("move forward measure gesture recognized");
+            scratchSound.Play();
+
+            Dictionary<string, string> cmd = new Dictionary<string, string>
+                {
+                    { "Command", "forward" },
+                };
+            MainWindow.QUEUE.Push(cmd);
+            ResetAllGestures();
+        }
+
+        static void ResetAllGestures()
+        {
+            raiseLeftHandGesture.Reset();
             raiseRightHandGesture.Reset();
             crossGesture.Reset();
             waveGesture.Reset();
-
+            moveBackGesture.Reset();
+            moveForwardGesture.Reset();
         }
 
         private void CheckPlayers()
@@ -581,35 +618,18 @@ namespace ShapeGame
             // Advance animations, and do hit testing.
             for (int i = 0; i < NumIntraFrames; ++i)
             {
-                foreach (var pair in this.players)
-                {
-                    HitType hit = this.myFallingThings.LookForHits(pair.Value.Segments, pair.Value.GetId());
-                    if ((hit & HitType.Squeezed) != 0)
-                    {
-                        this.squeezeSound.Play();
-                    }
-                    else if ((hit & HitType.Popped) != 0)
-                    {
-                        this.popSound.Play();
-                    }
-                    else if ((hit & HitType.Hand) != 0)
-                    {
-                        this.hitSound.Play();
-                    }
-                }
-
+         
                 this.myFallingThings.AdvanceFrame();
             }
 
             // Draw new Wpf scene by adding all objects to canvas
             playfield.Children.Clear();
-            this.myFallingThings.DrawFrame(this.playfield.Children);
             foreach (var player in this.players)
             {
                 player.Value.Draw(playfield.Children);
                 
             }
-            BannerText.Draw(playfield.Children);
+            //BannerText.Draw(playfield.Children);
             FlyingText.Draw(playfield.Children);
 
             this.CheckPlayers();

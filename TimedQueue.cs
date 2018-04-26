@@ -27,7 +27,7 @@ namespace ShapeGame
             queue.Enqueue(new TimedEvent<T>(data, t, idCounter));
             idCounter += 1;
             //Console.WriteLine(queue.Count);
-            Console.WriteLine(data);
+            //Console.WriteLine(data);
             Update(t);
         }
 

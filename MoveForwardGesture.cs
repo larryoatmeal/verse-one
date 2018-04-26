@@ -4,10 +4,8 @@ using System;
 
 namespace ShapeGame
 {
-    public class RaiseRightHandGesture
+    public class MoveForwardGesture
     {
-
-        
         readonly int WINDOW_SIZE = 50;
 
         IGestureSegment[] _segments;
@@ -18,22 +16,19 @@ namespace ShapeGame
         float lastSuccessTime = 0.0f;
         float timeBetweenGesture = 1.0f;
 
-
         public event EventHandler GestureRecognized;
 
-        public RaiseRightHandGesture()
+        public MoveForwardGesture()
         {
-            RaiseRightHandSegment1 raiseRightHandSegment1 = new RaiseRightHandSegment1();
-            RaiseRightHandSegment2 raiseRightHandSegment2 = new RaiseRightHandSegment2();
-            RaiseRightHandSegment3 raiseRightHandSegment3 = new RaiseRightHandSegment3();
-            RaiseRightHandSegment4 raiseRightHandSegment4 = new RaiseRightHandSegment4();
+            MoveForwardGestureSegment1 moveForwardGestureSegment1 = new MoveForwardGestureSegment1();
+            MoveForwardGestureSegment2 moveForwardGestureSegment2 = new MoveForwardGestureSegment2();
+            MoveForwardGestureSegment3 moveForwardGestureSegment3 = new MoveForwardGestureSegment3();
 
             _segments = new IGestureSegment[]
             {
-                raiseRightHandSegment1,
-                raiseRightHandSegment2,
-                raiseRightHandSegment3,
-                raiseRightHandSegment4
+                moveForwardGestureSegment1,
+                moveForwardGestureSegment2,
+                moveForwardGestureSegment3
             };
         }
 
@@ -63,7 +58,6 @@ namespace ShapeGame
                             lastSuccessTime = currentTime;
                             Reset();
                         }
-
                     }
                 }
             }
