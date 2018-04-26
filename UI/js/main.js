@@ -89,6 +89,19 @@ window.addEventListener('load', function() {
     }
 
 
+    function findNearestBeatIndex(time){
+
+        let diffs = beatData.beats.map(beat => {
+            return Math.abs(beat - time);
+        });
+        return argMin(diffs);
+    }
+
+    function findAdjacentBeat(time, step){
+        let i = findNearestBeatIndex(time);
+        i = Math.min(Math.max(0, i + step), beatData.beats.length - 1);
+        return beatData.beats[i];
+    }
 
 
 
@@ -121,6 +134,11 @@ window.addEventListener('load', function() {
 
     document.getElementById("setStartButton").addEventListener('click', setLoopStart);
     document.getElementById("setEndButton").addEventListener('click', setLoopEnd);
+
+
+    document.getElementById("rewindButton").addEventListener('click', rewind);
+    document.getElementById("fastForwardButton").addEventListener('click', fastforward);
+
     let playIcon = document.getElementById('playIcon');
     let pauseIcon = document.getElementById('pauseIcon');
     function togglePlay(){
@@ -172,8 +190,14 @@ window.addEventListener('load', function() {
             loopStart = aligned;
         }
 
+        if(Math.abs(loopStart - loopEnd) < 0.1){
+            loopEnd = findAdjacentBeat(loopStart, 1)
+        }
+
 
         setTimePosition(divA, loopStart);
+
+
 
     }
     function setLoopEnd(ts, bypassLoopOn){
@@ -189,6 +213,10 @@ window.addEventListener('load', function() {
         if(!bypassLoopOn){
             loopOn();
         }
+        if(Math.abs(loopStart - loopEnd) < 0.1){
+            loopEnd = findAdjacentBeat(loopStart, 1)
+        }
+
         setTimePosition(divB, loopEnd);
 
         //}
@@ -202,6 +230,19 @@ window.addEventListener('load', function() {
         isLooping = false;
         cycleButton.classList.add('notActive');
     }
+    function rewind(){
+        seekToTime(findAdjacentBeat(wavesurfer.getCurrentTime(), -2))
+    }
+    function fastforward(){
+        seekToTime(findAdjacentBeat(wavesurfer.getCurrentTime(), 2))
+    }
+
+    function seekToTime(t){
+        wavesurfer.seekTo(t/wavesurfer.getDuration());
+    }
+
+
+
 
     let deleteMe = [];
 
@@ -381,9 +422,17 @@ window.addEventListener('load', function() {
                 }
                 else if(command === 'setLoopStart'){
                     setLoopStart();
-                }else if(command === 'setLoopEnd'){
+                }
+                else if(command === 'setLoopEnd'){
                     setLoopEnd();
                 }
+                else if(command === 'forward'){
+                    fastforward();
+                }
+                else if(command === 'reverse'){
+                    rewind();
+                }
+
                 processedMessages.add(id);
             }
         });
