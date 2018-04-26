@@ -61,6 +61,8 @@ namespace ShapeGame
         private readonly SoundPlayer popSound = new SoundPlayer();
         private readonly SoundPlayer hitSound = new SoundPlayer();
         private readonly SoundPlayer squeezeSound = new SoundPlayer();
+        private static readonly SoundPlayer bellSound = new SoundPlayer();
+
         private readonly KinectSensorChooser sensorChooser = new KinectSensorChooser();
 
         private double dropRate = DefaultDropRate;
@@ -83,6 +85,10 @@ namespace ShapeGame
         private int playersAlive;
 
         private SpeechRecognizer mySpeechRecognizer;
+        static CrossGesture crossGesture = new CrossGesture();
+        static RaiseLeftHandGesture raiseLeftHandGesture = new RaiseLeftHandGesture();
+        static RaiseRightHandGesture raiseRightHandGesture = new RaiseRightHandGesture();
+        static WaveGesture waveGesture = new WaveGesture();
 
 
         public static TimedQueue<Dictionary<string, string>> QUEUE;
@@ -181,6 +187,7 @@ namespace ShapeGame
             this.popSound.Stream = Properties.Resources.Pop_5;
             this.hitSound.Stream = Properties.Resources.Hit_2;
             this.squeezeSound.Stream = Properties.Resources.Squeeze;
+            bellSound.Stream = Properties.Resources.Bell;
 
             this.popSound.Play();
 
@@ -189,7 +196,6 @@ namespace ShapeGame
             myGameThread.SetApartmentState(ApartmentState.STA);
             myGameThread.Start();
 
-            FlyingText.NewFlyingText(this.screenRect.Width / 30, new Point(this.screenRect.Width / 2, this.screenRect.Height / 2), "Shapes!");
         }
 
         private void WindowClosing(object sender, CancelEventArgs e)
@@ -245,6 +251,12 @@ namespace ShapeGame
                                              };
             kinectSensorManager.SkeletonStreamEnabled = true;
             kinectSensorManager.KinectSensorEnabled = true;
+
+            crossGesture.GestureRecognized += CrossGestureRecognized;
+            raiseLeftHandGesture.GestureRecognized += RaiseLeftHandGestureRecognized;
+            raiseRightHandGesture.GestureRecognized += RaiseRightHandGestureRecognized;
+            waveGesture.GestureRecognized += WaveGestureRecognized;
+
 
             if (!kinectSensorManager.KinectSensorAppConflict)
             {
@@ -319,7 +331,12 @@ namespace ShapeGame
                             {
                                 player.IsAlive = true;
 
-                                player.DetectGesture(skeleton.Joints);
+                                crossGesture.Update(skeleton);
+                                raiseRightHandGesture.Update(skeleton);
+                                raiseLeftHandGesture.Update(skeleton);
+                                waveGesture.Update(skeleton);
+
+                                //player.DetectGesture(skeleton.Joints);
                                 // Head, hands, feet (hit testing happens in order here)
                                 player.UpdateJointPosition(skeleton.Joints, JointType.Head);
                                 player.UpdateJointPosition(skeleton.Joints, JointType.HandLeft);
@@ -362,6 +379,69 @@ namespace ShapeGame
                     }
                 }
             }
+        }
+
+        static void CrossGestureRecognized(object sender, EventArgs e)
+        {
+            Console.WriteLine("cross");
+            bellSound.Play();
+
+            Dictionary<string, string> cmd = new Dictionary<string, string>
+                {
+                    { "Command", "togglePlay" },
+                };
+            MainWindow.QUEUE.Push(cmd);
+            raiseLeftHandGesture.Reset();
+            raiseRightHandGesture.Reset();
+            waveGesture.Reset();
+
+        }
+
+        static void RaiseRightHandGestureRecognized(object sender, EventArgs e)
+        {
+            Console.WriteLine("raised right");
+            bellSound.Play();
+
+            Dictionary<string, string> cmd = new Dictionary<string, string>
+                {
+                    { "Command", "setLoopEnd" },
+                };
+            MainWindow.QUEUE.Push(cmd);
+            raiseLeftHandGesture.Reset();
+            crossGesture.Reset();
+            waveGesture.Reset();
+
+        }
+
+        static void WaveGestureRecognized(object sender, EventArgs e)
+        {
+            Console.WriteLine("waved aka loop");
+            bellSound.Play();
+
+            Dictionary<string, string> cmd = new Dictionary<string, string>
+                {
+                    { "Command", "toggleLoop" },
+                };
+            MainWindow.QUEUE.Push(cmd);
+            raiseLeftHandGesture.Reset();
+            raiseRightHandGesture.Reset();
+            crossGesture.Reset();
+        }
+
+        static void RaiseLeftHandGestureRecognized(object sender, EventArgs e)
+        {
+            Console.WriteLine("raised left");
+            bellSound.Play();
+
+            Dictionary<string, string> cmd = new Dictionary<string, string>
+                {
+                    { "Command", "setLoopStart" },
+                };
+            MainWindow.QUEUE.Push(cmd);
+            raiseRightHandGesture.Reset();
+            crossGesture.Reset();
+            waveGesture.Reset();
+
         }
 
         private void CheckPlayers()
@@ -527,8 +607,8 @@ namespace ShapeGame
             foreach (var player in this.players)
             {
                 player.Value.Draw(playfield.Children);
+                
             }
-
             BannerText.Draw(playfield.Children);
             FlyingText.Draw(playfield.Children);
 
