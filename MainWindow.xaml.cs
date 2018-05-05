@@ -452,7 +452,7 @@ namespace ShapeGame
 
             Dictionary<string, string> cmd = new Dictionary<string, string>
                 {
-                    { "Command", "reverse" },
+                    { "Command", "forward" },
                 };
             MainWindow.QUEUE.Push(cmd);
             ResetAllGestures();
@@ -465,7 +465,7 @@ namespace ShapeGame
 
             Dictionary<string, string> cmd = new Dictionary<string, string>
                 {
-                    { "Command", "forward" },
+                    { "Command", "reverse" },
                 };
             MainWindow.QUEUE.Push(cmd);
             ResetAllGestures();
@@ -648,82 +648,6 @@ namespace ShapeGame
                     break;
                 case SpeechRecognizer.Verbs.Resume:
                     this.myFallingThings.SetDropRate(this.dropRate);
-                    this.myFallingThings.SetGravity(this.dropGravity);
-                    break;
-                case SpeechRecognizer.Verbs.Reset:
-                    this.dropRate = DefaultDropRate;
-                    this.dropSize = DefaultDropSize;
-                    this.dropGravity = DefaultDropGravity;
-                    this.myFallingThings.SetPolies(PolyType.All);
-                    this.myFallingThings.SetDropRate(this.dropRate);
-                    this.myFallingThings.SetGravity(this.dropGravity);
-                    this.myFallingThings.SetSize(this.dropSize);
-                    this.myFallingThings.SetShapesColor(System.Windows.Media.Color.FromRgb(0, 0, 0), true);
-                    this.myFallingThings.Reset();
-                    break;
-                case SpeechRecognizer.Verbs.DoShapes:
-                    this.myFallingThings.SetPolies(e.Shape);
-                    break;
-                case SpeechRecognizer.Verbs.RandomColors:
-                    this.myFallingThings.SetShapesColor(System.Windows.Media.Color.FromRgb(0, 0, 0), true);
-                    break;
-                case SpeechRecognizer.Verbs.Colorize:
-                    this.myFallingThings.SetShapesColor(e.RgbColor, false);
-                    break;
-                case SpeechRecognizer.Verbs.ShapesAndColors:
-                    this.myFallingThings.SetPolies(e.Shape);
-                    this.myFallingThings.SetShapesColor(e.RgbColor, false);
-                    break;
-                case SpeechRecognizer.Verbs.More:
-                    this.dropRate *= 1.5;
-                    this.myFallingThings.SetDropRate(this.dropRate);
-                    break;
-                case SpeechRecognizer.Verbs.Fewer:
-                    this.dropRate /= 1.5;
-                    this.myFallingThings.SetDropRate(this.dropRate);
-                    break;
-                case SpeechRecognizer.Verbs.Bigger:
-                    this.dropSize *= 1.5;
-                    if (this.dropSize > MaxShapeSize)
-                    {
-                        this.dropSize = MaxShapeSize;
-                    }
-
-                    this.myFallingThings.SetSize(this.dropSize);
-                    break;
-                case SpeechRecognizer.Verbs.Biggest:
-                    this.dropSize = MaxShapeSize;
-                    this.myFallingThings.SetSize(this.dropSize);
-                    break;
-                case SpeechRecognizer.Verbs.Smaller:
-                    this.dropSize /= 1.5;
-                    if (this.dropSize < MinShapeSize)
-                    {
-                        this.dropSize = MinShapeSize;
-                    }
-
-                    this.myFallingThings.SetSize(this.dropSize);
-                    break;
-                case SpeechRecognizer.Verbs.Smallest:
-                    this.dropSize = MinShapeSize;
-                    this.myFallingThings.SetSize(this.dropSize);
-                    break;
-                case SpeechRecognizer.Verbs.Faster:
-                    this.dropGravity *= 1.25;
-                    if (this.dropGravity > 4.0)
-                    {
-                        this.dropGravity = 4.0;
-                    }
-
-                    this.myFallingThings.SetGravity(this.dropGravity);
-                    break;
-                case SpeechRecognizer.Verbs.Slower:
-                    this.dropGravity /= 1.25;
-                    if (this.dropGravity < 0.25)
-                    {
-                        this.dropGravity = 0.25;
-                    }
-
                     this.myFallingThings.SetGravity(this.dropGravity);
                     break;
             }
