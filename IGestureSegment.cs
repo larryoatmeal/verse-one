@@ -189,7 +189,7 @@ namespace ShapeGame
 
         public GesturePartResult Update(Skeleton skeleton)
         {
-            var armCorrect = skeleton.Joints[JointType.ShoulderLeft].Position.Y < skeleton.Joints[JointType.ElbowRight].Position.Y && skeleton.Joints[JointType.Head].Position.Y < skeleton.Joints[JointType.HandRight].Position.Y;
+            var armCorrect = skeleton.Joints[JointType.ShoulderLeft].Position.Y < skeleton.Joints[JointType.ElbowRight].Position.Y && skeleton.Joints[JointType.Head].Position.Y < 0.8 * skeleton.Joints[JointType.HandRight].Position.Y;
             if (armCorrect)
             {
                 return GesturePartResult.Succeeded;
@@ -249,7 +249,7 @@ namespace ShapeGame
 
         public GesturePartResult Update(Skeleton skeleton)
         {
-            var armCorrect = (skeleton.Joints[JointType.ShoulderLeft].Position.Y) < skeleton.Joints[JointType.ElbowLeft].Position.Y && skeleton.Joints[JointType.Head].Position.Y < skeleton.Joints[JointType.HandLeft].Position.Y;
+            var armCorrect = (skeleton.Joints[JointType.ShoulderLeft].Position.Y) < skeleton.Joints[JointType.ElbowLeft].Position.Y && skeleton.Joints[JointType.Head].Position.Y < 0.8 * skeleton.Joints[JointType.HandLeft].Position.Y;
             if (armCorrect)
             {
                 return GesturePartResult.Succeeded;

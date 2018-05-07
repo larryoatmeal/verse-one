@@ -31,6 +31,8 @@ namespace ShapeGame
     using WebServer;
     using Newtonsoft.Json;
     using System.Diagnostics;
+    
+    
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -101,14 +103,18 @@ namespace ShapeGame
         private static float messageWindowSize = 2;
         public static Stopwatch stopWatch = new Stopwatch();
         private static int ID = 0;
+        private float threshold = 0.9f;
 
-
+        MIDIMaster midiMaster;
         #endregion Private State
 
         #region ctor + Window Events
 
         public MainWindow()
         {
+            midiMaster = new MIDIMaster();
+            midiMaster.Setup();
+
             this.KinectSensorManager = new KinectSensorManager();
             this.KinectSensorManager.KinectSensorChanged += this.KinectSensorChanged;
             this.DataContext = this.KinectSensorManager;
@@ -129,6 +135,14 @@ namespace ShapeGame
 
             stopWatch.Start();
 
+            CalibrationButton.Click += CalibrationButtonClicked;
+        }
+
+
+        private void CalibrationButtonClicked(object sender, RoutedEventArgs e)
+        {
+            CalibrationWindow c = new CalibrationWindow();
+            this.Content = c;
         }
 
         public static string SendResponse(HttpListenerRequest request)
@@ -414,8 +428,6 @@ namespace ShapeGame
                 };
             MainWindow.QUEUE.Push(cmd);
             ResetAllGestures();
-
-
         }
 
         static void WaveGestureRecognized(object sender, EventArgs e)
@@ -479,6 +491,14 @@ namespace ShapeGame
             waveGesture.Reset();
             moveBackGesture.Reset();
             moveForwardGesture.Reset();
+        }
+
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // ... Get control that raised this event.
+            var textBox = sender as TextBox;
+            //this.threshold = textBox.Text;
         }
 
         private void CheckPlayers()
@@ -650,6 +670,7 @@ namespace ShapeGame
                     this.myFallingThings.SetDropRate(this.dropRate);
                     this.myFallingThings.SetGravity(this.dropGravity);
                     break;
+                
             }
         }
 

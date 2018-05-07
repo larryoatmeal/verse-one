@@ -11,7 +11,7 @@ namespace ShapeGame
 {
     public class CrossGesture
     {
-
+       
         readonly int WINDOW_SIZE = 50;
 
         IGestureSegment[] _segments;
