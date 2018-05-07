@@ -4,8 +4,11 @@ using System;
 
 namespace ShapeGame
 {
+
+    
     public class RaiseLeftHandGesture
     {
+        
         readonly int WINDOW_SIZE = 50;
 
         IGestureSegment[] _segments;
@@ -41,7 +44,7 @@ namespace ShapeGame
         {
             var currentTime = MainWindow.stopWatch.ElapsedMilliseconds / 1000.0f;
             GesturePartResult result = _segments[_currentSegment].Update(skeleton);
-            Console.WriteLine(_currentSegment);
+            //Console.WriteLine(_currentSegment);
             if (result == GesturePartResult.Succeeded)
             {
                 if (_currentSegment + 1 < _segments.Length)
@@ -67,7 +70,7 @@ namespace ShapeGame
 
                     if (currentTime - lastGestureTime < 2 && prevResult == GesturePartResult.Succeeded) //we still havent left prev state
                     {
-                        Console.WriteLine("holding gesture");
+                        //Console.WriteLine("holding gesture");
                     }
                     else
                     {

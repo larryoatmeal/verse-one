@@ -40,8 +40,6 @@ namespace ShapeGame
         public double offset = 0.0;
         
         public float windowSize = 3;
-       // Stopwatch stopWatch = new Stopwatch();
-
 
         //vertical min and max > threshold and horizontal min and max < 
 
@@ -62,11 +60,6 @@ namespace ShapeGame
             this.jointsBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(jointCols[mixR[i]], jointCols[mixG[i]], jointCols[mixB[i]]));
             this.bonesBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(boneCols[mixR[i]], boneCols[mixG[i]], boneCols[mixB[i]]));
             this.LastUpdated = DateTime.Now;
-            //this.stopWatch = new Stopwatch();
-            //this.stopWatch.Start();
-
-            //jointQueue = new TimedQueue<JointCollection>(windowSize);
-
         }
 
         public bool IsAlive { get; set; }
@@ -92,75 +85,6 @@ namespace ShapeGame
             this.playerCenter.X = (this.playerBounds.Left + this.playerBounds.Right) / 2;
             this.playerCenter.Y = (this.playerBounds.Top + this.playerBounds.Bottom) / 2;
             this.playerScale = Math.Min(this.playerBounds.Width, this.playerBounds.Height / 2);
-        }
-
-        public void DetectGesture(Microsoft.Kinect.JointCollection joints)
-        {
-            var leftWrist = joints[Microsoft.Kinect.JointType.WristLeft];
-            var leftShoulder = joints[Microsoft.Kinect.JointType.ShoulderLeft];
-            var leftElbow = joints[Microsoft.Kinect.JointType.ElbowLeft];
-
-            var wrist = new Vector(leftWrist.Position.X, leftWrist.Position.Y);
-            var elbow = new Vector(leftElbow.Position.X, leftElbow.Position.Y);
-            var shoulder = new Vector(leftShoulder.Position.X, leftShoulder.Position.Y);
-
-            var diffY = shoulder.Y - elbow.Y;
-            var diffX = shoulder.X - elbow.X;
-            var angleList = angleBuffer.GetData();
-            var angle = Math.Atan2(diffY, diffX) + 2 * Math.PI;
-    
-             
-            //reset window 
-            if (angleList.Count == 0)
-            {
-                offset = 0.0;
-            }
-
-            else
-            {
-                var previousAngle = angleList[angleList.Count - 1].Data;
-                if (Math.Abs(previousAngle - angle) > 1.5 * Math.PI)
-                {
-                    offset += 2 * Math.PI;
-                }
-            }
-            angle += offset;
-
-
-
-            //if (leftHand.Position.Y > elbowLeft.Position.Y && leftHand.Position.X > elbowLeft.Position.X)
-            //{
-            //    MainWindow.jointQueue.Push(joints);
-            //    Dictionary<string, string> cmd = new Dictionary<string, string>
-            //    {
-            //        { "Command", "pause" },
-            //    };
-            //    MainWindow.QUEUE.Push(cmd);
-            //}
-
-            angleBuffer.Push(angle);
-            var loop = isMonotonicallyDecreasing(angleList);
-            if (loop)
-            {
-                Console.WriteLine("loop detected");
-            }
-        }
-
-
-        public bool isMonotonicallyDecreasing(List<TimedEvent<double>> list)
-        {
-            if (list.Count > 30)
-            {
-                for (var i = 1; i < list.Count; i++)
-                {
-                    if ((list[i].Data - list[i - 1].Data) > 0.3)
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return false;
         }
 
         public void UpdateBonePosition(Microsoft.Kinect.JointCollection joints, JointType j1, JointType j2)

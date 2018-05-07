@@ -26,8 +26,6 @@ namespace ShapeGame
             float t = MainWindow.stopWatch.ElapsedMilliseconds / 1000.0f;
             queue.Enqueue(new TimedEvent<T>(data, t, idCounter));
             idCounter += 1;
-            //Console.WriteLine(queue.Count);
-            Console.WriteLine(data);
             Update(t);
         }
 

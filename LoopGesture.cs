@@ -34,7 +34,6 @@ namespace ShapeGame
         {
             var currentTime = MainWindow.stopWatch.ElapsedMilliseconds / 1000.0f;
             GesturePartResult result = _segments[_currentSegment].Update(skeleton);
-            Console.WriteLine(_currentSegment);
             if (result == GesturePartResult.Succeeded)
             {
                 if (_currentSegment + 1 < _segments.Length)

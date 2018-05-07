@@ -98,6 +98,8 @@
     <Compile Include="CrossGesture.cs" />
     <Compile Include="IGestureSegment.cs" />
     <Compile Include="LoopGesture.cs" />
+    <Compile Include="MoveBackGesture.cs" />
+    <Compile Include="MoveForwardGesture.cs" />
     <Compile Include="RaiseLeftHandGesture.cs" />
     <Compile Include="RaiseRightHandGesture.cs" />
     <Compile Include="SpeechRecognizer.cs" />
@@ -192,6 +194,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="bell.wav" />
+    <None Include="scratch.wav" />
+    <None Include="hollow.wav" />
+    <None Include="gong.wav" />
+    <None Include="cowbell.wav" />
+    <None Include="bike.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
