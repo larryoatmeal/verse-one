@@ -141,6 +141,13 @@ window.addEventListener('load', function() {
 
     let playIcon = document.getElementById('playIcon');
     let pauseIcon = document.getElementById('pauseIcon');
+
+
+    wavesurfer.on('finish', function () {
+        console.log("FINISHED PLAYING");
+        seekToTime(0);
+        pause();
+    });
     function togglePlay(){
 
 
@@ -167,6 +174,10 @@ window.addEventListener('load', function() {
         playIcon.style.display = 'none';
         pauseIcon.style.display = '';
         console.log("PLAY");
+
+        let t = findAdjacentBeat(wavesurfer.getCurrentTime(), -1);
+        seekToTime(t);
+
         wavesurfer.play();
     }
     function pause(){
