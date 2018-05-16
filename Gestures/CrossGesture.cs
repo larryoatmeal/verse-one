@@ -4,10 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.Kinect;
 using System;
+using Microsoft.Kinect;
 
-namespace ShapeGame
+namespace ShapeGame.Gestures
 {
     public class CrossGesture
     {
@@ -70,7 +70,7 @@ namespace ShapeGame
 
                     if (currentTime - lastGestureTime < 2 && prevResult == GesturePartResult.Succeeded) //we still havent left prev state
                     {
-                        Console.WriteLine("holding gesture");
+                        //Console.WriteLine("holding gesture");
                     }
                     else
                     {

@@ -54,6 +54,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="alsa-sharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\managed-midi.1.2.0\lib\net45\alsa-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Commons.Music.Midi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\managed-midi.1.2.0\lib\net45\Commons.Music.Midi.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Kinect">
       <HintPath>$(KINECTSDK10_DIR)\Assemblies\Microsoft.Kinect.dll</HintPath>
     </Reference>
@@ -116,18 +122,18 @@
     <Compile Include="CalibrationWindow.xaml.cs">
       <DependentUpon>CalibrationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CrossGesture.cs" />
+    <Compile Include="Gestures\CrossGesture.cs" />
     <Compile Include="IGestureSegment.cs" />
-    <Compile Include="LoopGesture.cs" />
+    <Compile Include="Gestures\LoopGesture.cs" />
     <Compile Include="MIDIMaster.cs" />
     <Compile Include="MoveBackGesture.cs" />
     <Compile Include="MoveForwardGesture.cs" />
-    <Compile Include="RaiseLeftHandGesture.cs" />
-    <Compile Include="RaiseRightHandGesture.cs" />
+    <Compile Include="Gestures\RaiseLeftHandGesture.cs" />
+    <Compile Include="Gestures\RaiseRightHandGesture.cs" />
     <Compile Include="SpeechRecognizer.cs" />
     <Compile Include="TimedEvent.cs" />
     <Compile Include="TimedQueue.cs" />
-    <Compile Include="WaveGesture.cs" />
+    <Compile Include="Gestures\WaveGesture.cs" />
     <Compile Include="WebServer.cs" />
     <Page Include="CalibrationWindow.xaml">
       <SubType>Designer</SubType>

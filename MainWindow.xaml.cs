@@ -8,6 +8,8 @@
 // processing, displaying players on screen, and sending updated player
 // positions to the game portion for hit testing.
 
+using ShapeGame.Gestures;
+
 namespace ShapeGame
 {
     using System;
@@ -32,8 +34,7 @@ namespace ShapeGame
     using Newtonsoft.Json;
     using System.Diagnostics;
     
-    
-
+   
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -53,11 +54,12 @@ namespace ShapeGame
         private const int MaxShapes = 80;
         private const double MaxFramerate = 70;
         private const double MinFramerate = 15;
-        private const double MinShapeSize = 12;
-        private const double MaxShapeSize = 90;
-        private const double DefaultDropRate = 2.5;
-        private const double DefaultDropSize = 32.0;
-        private const double DefaultDropGravity = 1.0;
+        private const string CmdTogglePlay = "togglePlay";
+        private const string CmdSetloopend = "setLoopEnd";
+        private const string CmdToggleloop = "toggleLoop";
+        private const string CmdSetloopstart = "setLoopStart";
+        private const string CmdForward = "forward";
+        private const string CmdReverse = "reverse";
 
         private readonly Dictionary<int, Player> players = new Dictionary<int, Player>();
         private readonly SoundPlayer popSound = new SoundPlayer();
@@ -67,10 +69,6 @@ namespace ShapeGame
         private static readonly SoundPlayer scratchSound = new SoundPlayer();
 
         private readonly KinectSensorChooser sensorChooser = new KinectSensorChooser();
-
-        private double dropRate = DefaultDropRate;
-        private double dropSize = DefaultDropSize;
-        private double dropGravity = DefaultDropGravity;
         private DateTime lastFrameDrawn = DateTime.MinValue;
         private DateTime predNextFrame = DateTime.MinValue;
         private double actualFrameTime;
@@ -84,7 +82,7 @@ namespace ShapeGame
         private double targetFramerate = MaxFramerate;
         private int frameCount;
         private bool runningGameThread;
-        private FallingThings myFallingThings;
+//        private FallingThings myFallingThings;
         private int playersAlive;
 
         private SpeechRecognizer mySpeechRecognizer;
@@ -191,15 +189,7 @@ namespace ShapeGame
         {
             playfield.ClipToBounds = true;
 
-            this.myFallingThings = new FallingThings(MaxShapes, this.targetFramerate, NumIntraFrames);
-
             this.UpdatePlayfieldSize();
-
-            this.myFallingThings.SetGravity(this.dropGravity);
-            this.myFallingThings.SetDropRate(this.dropRate);
-            this.myFallingThings.SetSize(this.dropSize);
-            this.myFallingThings.SetPolies(PolyType.All);
-            this.myFallingThings.SetGameMode(GameMode.Off);
 
             this.popSound.Stream = Properties.Resources.Pop_5;
             this.hitSound.Stream = Properties.Resources.Hit_2;
@@ -212,7 +202,6 @@ namespace ShapeGame
             var myGameThread = new Thread(this.GameThread);
             myGameThread.SetApartmentState(ApartmentState.STA);
             myGameThread.Start();
-
         }
 
         private void WindowClosing(object sender, CancelEventArgs e)
@@ -405,82 +394,47 @@ namespace ShapeGame
             }
         }
 
-        static void CrossGestureRecognized(object sender, EventArgs e)
+        static void SendCommand(string command, string description = "Description Here")
         {
-            Console.WriteLine("CROSS");
+            Console.WriteLine(description);
             bellSound.Play();
 
             Dictionary<string, string> cmd = new Dictionary<string, string>
-                {
-                    { "Command", "togglePlay" },
-                };
+            {
+                { "Command", command}
+            };
             MainWindow.QUEUE.Push(cmd);
+
+ 
+        }
+        static void CrossGestureRecognized(object sender, EventArgs e)
+        {
+            SendCommand(CmdTogglePlay, "CROSS GESTURE RECOGNIZED");
         }
 
         static void RaiseRightHandGestureRecognized(object sender, EventArgs e)
         {
-            Console.WriteLine("raised right");
-            bellSound.Play();
-
-            Dictionary<string, string> cmd = new Dictionary<string, string>
-                {
-                    { "Command", "setLoopEnd" },
-                };
-            MainWindow.QUEUE.Push(cmd);
-            ResetAllGestures();
+            SendCommand(CmdSetloopend, "RIGHT HAND RAISED RECOGNIZED");
         }
 
         static void WaveGestureRecognized(object sender, EventArgs e)
         {
-            Console.WriteLine("waved aka loop");
-            scratchSound.Play();
-
-            Dictionary<string, string> cmd = new Dictionary<string, string>
-                {
-                    { "Command", "toggleLoop" },
-                };
-            MainWindow.QUEUE.Push(cmd);
-            ResetAllGestures();
-
+            SendCommand(CmdToggleloop, "WAVE GESTURE RECOGNIZED");
         }
 
         static void RaiseLeftHandGestureRecognized(object sender, EventArgs e)
         {
-            Console.WriteLine("raised left");
-            bellSound.Play();
-
-            Dictionary<string, string> cmd = new Dictionary<string, string>
-                {
-                    { "Command", "setLoopStart" },
-                };
-            MainWindow.QUEUE.Push(cmd);
-            ResetAllGestures();
+            SendCommand(CmdSetloopstart, "LEFT HAND RAISED RECOGNIZED");
         }
 
         static void MoveBackGestureRecognized(object sender, EventArgs e)
         {
-            Console.WriteLine("move back measure gesture recognized");
-            scratchSound.Play();
-
-            Dictionary<string, string> cmd = new Dictionary<string, string>
-                {
-                    { "Command", "forward" },
-                };
-            MainWindow.QUEUE.Push(cmd);
-            ResetAllGestures();
+            SendCommand(CmdForward, "SEEK BACKWARDS GESTURE RECOGNIZED");
         }
 
         static void MoveForwardGestureRecognized(object sender, EventArgs e)
         {
-            Console.WriteLine("move forward measure gesture recognized");
-            scratchSound.Play();
-
-            Dictionary<string, string> cmd = new Dictionary<string, string>
-                {
-                    { "Command", "reverse" },
-                };
-            MainWindow.QUEUE.Push(cmd);
-            ResetAllGestures();
+            SendCommand(CmdReverse, "SEEK FORWARD GESTURE RECOGNIZED");
         }
 
         static void ResetAllGestures()
@@ -518,18 +472,6 @@ namespace ShapeGame
 
             if (alive != this.playersAlive)
             {
-                if (alive == 2)
-                {
-                    this.myFallingThings.SetGameMode(GameMode.TwoPlayer);
-                }
-                else if (alive == 1)
-                {
-                    this.myFallingThings.SetGameMode(GameMode.Solo);
-                }
-                else if (alive == 0)
-                {
-                    this.myFallingThings.SetGameMode(GameMode.Off);
-                }
 
                 if ((this.playersAlive == 0) && (this.mySpeechRecognizer != null))
                 {
@@ -572,10 +514,7 @@ namespace ShapeGame
             Rect fallingBounds = this.playerBounds;
             fallingBounds.Y = 0;
             fallingBounds.Height = playfield.ActualHeight;
-            if (this.myFallingThings != null)
-            {
-                this.myFallingThings.SetBoundaries(fallingBounds);
-            }
+ 
         }
         #endregion Kinect Skeleton processing
 
@@ -629,19 +568,6 @@ namespace ShapeGame
 
         private void HandleGameTimer(int param)
         {
-            // Every so often, notify what our actual framerate is
-            if ((this.frameCount % 100) == 0)
-            {
-                this.myFallingThings.SetFramerate(1000.0 / this.actualFrameTime);
-            }
-
-            // Advance animations, and do hit testing.
-            for (int i = 0; i < NumIntraFrames; ++i)
-            {
-         
-                this.myFallingThings.AdvanceFrame();
-            }
-
             // Draw new Wpf scene by adding all objects to canvas
             playfield.Children.Clear();
             foreach (var player in this.players)
@@ -660,18 +586,14 @@ namespace ShapeGame
         private void RecognizerSaidSomething(object sender, SpeechRecognizer.SaidSomethingEventArgs e)
         {
             FlyingText.NewFlyingText(this.screenRect.Width / 30, new Point(this.screenRect.Width / 2, this.screenRect.Height / 2), e.Matched);
-            switch (e.Verb)
-            {
-                case SpeechRecognizer.Verbs.Pause:
-                    this.myFallingThings.SetDropRate(0);
-                    this.myFallingThings.SetGravity(0);
-                    break;
-                case SpeechRecognizer.Verbs.Resume:
-                    this.myFallingThings.SetDropRate(this.dropRate);
-                    this.myFallingThings.SetGravity(this.dropGravity);
-                    break;
-                
-            }
+//            switch (e.Verb)
+//            {
+//                case SpeechRecognizer.Verbs.Pause:
+//                    
+//                    break;
+//                case SpeechRecognizer.Verbs.Resume:
+//                    break;
+//            }
         }
 
         private void EnableAecChecked(object sender, RoutedEventArgs e)

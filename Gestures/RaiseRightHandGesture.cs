@@ -1,12 +1,12 @@
-﻿using Microsoft.Kinect;
-using System;
+﻿using System;
+using Microsoft.Kinect;
 
-namespace ShapeGame
+namespace ShapeGame.Gestures
 {
-    public class LoopGesture
+    public class RaiseRightHandGesture
     {
 
-
+        
         readonly int WINDOW_SIZE = 50;
 
         IGestureSegment[] _segments;
@@ -14,15 +14,25 @@ namespace ShapeGame
         int _currentSegment = 0;
         int _frameCount = 0;
         float lastGestureTime = 0.0f;
+        float lastSuccessTime = 0.0f;
+        float timeBetweenGesture = 1.0f;
 
 
         public event EventHandler GestureRecognized;
 
-        public LoopGesture()
+        public RaiseRightHandGesture()
         {
+            RaiseRightHandSegment1 raiseRightHandSegment1 = new RaiseRightHandSegment1();
+            RaiseRightHandSegment2 raiseRightHandSegment2 = new RaiseRightHandSegment2();
+            RaiseRightHandSegment3 raiseRightHandSegment3 = new RaiseRightHandSegment3();
+            RaiseRightHandSegment4 raiseRightHandSegment4 = new RaiseRightHandSegment4();
 
             _segments = new IGestureSegment[]
             {
+                raiseRightHandSegment1,
+                raiseRightHandSegment2,
+                raiseRightHandSegment3,
+                raiseRightHandSegment4
             };
         }
 
@@ -46,8 +56,13 @@ namespace ShapeGame
                 {
                     if (GestureRecognized != null)
                     {
-                        GestureRecognized(this, new EventArgs());
-                        Reset();
+                        if (currentTime - lastSuccessTime > timeBetweenGesture)
+                        {
+                            GestureRecognized(this, new EventArgs());
+                            lastSuccessTime = currentTime;
+                            Reset();
+                        }
+
                     }
                 }
             }
@@ -59,7 +74,7 @@ namespace ShapeGame
 
                     if (currentTime - lastGestureTime < 2 && prevResult == GesturePartResult.Succeeded) //we still havent left prev state
                     {
-                        Console.WriteLine("holding gesture");
+                        //Console.WriteLine("holding gesture");
                     }
                     else
                     {

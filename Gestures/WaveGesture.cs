@@ -1,13 +1,11 @@
-﻿
+﻿using System;
 using Microsoft.Kinect;
-using System;
 
-namespace ShapeGame
+namespace ShapeGame.Gestures
 {
-    public class RaiseRightHandGesture
+    public class WaveGesture
     {
 
-        
         readonly int WINDOW_SIZE = 50;
 
         IGestureSegment[] _segments;
@@ -15,25 +13,23 @@ namespace ShapeGame
         int _currentSegment = 0;
         int _frameCount = 0;
         float lastGestureTime = 0.0f;
-        float lastSuccessTime = 0.0f;
-        float timeBetweenGesture = 1.0f;
 
 
         public event EventHandler GestureRecognized;
 
-        public RaiseRightHandGesture()
+        public WaveGesture()
         {
-            RaiseRightHandSegment1 raiseRightHandSegment1 = new RaiseRightHandSegment1();
-            RaiseRightHandSegment2 raiseRightHandSegment2 = new RaiseRightHandSegment2();
-            RaiseRightHandSegment3 raiseRightHandSegment3 = new RaiseRightHandSegment3();
-            RaiseRightHandSegment4 raiseRightHandSegment4 = new RaiseRightHandSegment4();
+            WaveSegment1 waveRightSegment1 = new WaveSegment1();
+            WaveSegment2 waveRightSegment2 = new WaveSegment2();
 
             _segments = new IGestureSegment[]
             {
-                raiseRightHandSegment1,
-                raiseRightHandSegment2,
-                raiseRightHandSegment3,
-                raiseRightHandSegment4
+                waveRightSegment1,
+                waveRightSegment2,
+                waveRightSegment1,
+                waveRightSegment2,
+                waveRightSegment1,
+                waveRightSegment2
             };
         }
 
@@ -57,13 +53,8 @@ namespace ShapeGame
                 {
                     if (GestureRecognized != null)
                     {
-                        if (currentTime - lastSuccessTime > timeBetweenGesture)
-                        {
-                            GestureRecognized(this, new EventArgs());
-                            lastSuccessTime = currentTime;
-                            Reset();
-                        }
-
+                        GestureRecognized(this, new EventArgs());
+                        Reset();
                     }
                 }
             }
@@ -76,7 +67,7 @@ namespace ShapeGame
                     if (currentTime - lastGestureTime < 2 && prevResult == GesturePartResult.Succeeded) //we still havent left prev state
                     {
                         //Console.WriteLine("holding gesture");
-                    }
+                    } 
                     else
                     {
                         Reset();
@@ -103,5 +94,5 @@ namespace ShapeGame
             lastGestureTime = 0.0f;
         }
     }
-
+    
 }

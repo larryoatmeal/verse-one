@@ -1,11 +1,10 @@
-﻿using Microsoft.Kinect;
-using System;
+﻿using System;
+using Microsoft.Kinect;
 
-namespace ShapeGame
+namespace ShapeGame.Gestures
 {
-    public class WaveGesture
+    public class LoopGesture
     {
-
         readonly int WINDOW_SIZE = 50;
 
         IGestureSegment[] _segments;
@@ -17,19 +16,11 @@ namespace ShapeGame
 
         public event EventHandler GestureRecognized;
 
-        public WaveGesture()
+        public LoopGesture()
         {
-            WaveSegment1 waveRightSegment1 = new WaveSegment1();
-            WaveSegment2 waveRightSegment2 = new WaveSegment2();
 
             _segments = new IGestureSegment[]
             {
-                waveRightSegment1,
-                waveRightSegment2,
-                waveRightSegment1,
-                waveRightSegment2,
-                waveRightSegment1,
-                waveRightSegment2
             };
         }
 
@@ -41,7 +32,6 @@ namespace ShapeGame
         {
             var currentTime = MainWindow.stopWatch.ElapsedMilliseconds / 1000.0f;
             GesturePartResult result = _segments[_currentSegment].Update(skeleton);
-            Console.WriteLine(_currentSegment);
             if (result == GesturePartResult.Succeeded)
             {
                 if (_currentSegment + 1 < _segments.Length)
@@ -67,8 +57,8 @@ namespace ShapeGame
 
                     if (currentTime - lastGestureTime < 2 && prevResult == GesturePartResult.Succeeded) //we still havent left prev state
                     {
-                        Console.WriteLine("holding gesture");
-                    } 
+                        //Console.WriteLine("holding gesture");
+                    }
                     else
                     {
                         Reset();
@@ -95,5 +85,5 @@ namespace ShapeGame
             lastGestureTime = 0.0f;
         }
     }
-    
+
 }

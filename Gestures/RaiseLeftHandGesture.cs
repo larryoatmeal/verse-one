@@ -1,8 +1,7 @@
-﻿
+﻿using System;
 using Microsoft.Kinect;
-using System;
 
-namespace ShapeGame
+namespace ShapeGame.Gestures
 {
 
     

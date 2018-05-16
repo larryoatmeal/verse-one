@@ -240,17 +240,17 @@ namespace ShapeGame.Speech
                 this.SaidSomething(new object(), said);
             }
 
-            Console.WriteLine("\nSpeech Rejected");
+            //Console.WriteLine("\nSpeech Rejected");
         }
 
         private void SreSpeechHypothesized(object sender, SpeechHypothesizedEventArgs e)
         {
-            Console.Write("\rSpeech Hypothesized: \t{0}", e.Result.Text);
+            //Console.Write("\rSpeech Hypothesized: \t{0}", e.Result.Text);
         }
 
         private void SreSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            Console.Write("\rSpeech Recognized: \t{0}", e.Result.Text);
+            //Console.Write("\rSpeech Recognized: \t{0}", e.Result.Text);
 
             if ((this.SaidSomething == null) || (e.Result.Confidence < 0.3))
             {

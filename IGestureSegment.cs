@@ -355,4 +355,26 @@ namespace ShapeGame
         }
     }
 
+
+    public class LeftForwards : IGestureSegment
+    {
+
+        public GesturePartResult Update(Skeleton skeleton)
+        {
+            //left foot right of right leg/knee
+            var rightLegCorrect = skeleton.Joints[JointType.FootRight].Position.X < skeleton.Joints[JointType.HipLeft].Position.X && skeleton.Joints[JointType.KneeRight].Position.Y > skeleton.Joints[JointType.HipLeft].Position.Y;
+            if (rightLegCorrect)
+            {
+                return GesturePartResult.Succeeded;
+
+            }
+            return GesturePartResult.Failed;
+        }
+    }
+
+
+
+
+
+
 }

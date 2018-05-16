@@ -9,6 +9,8 @@
 
 using Midi;
 using System;
+using Commons.Music.Midi;
+using System.Linq;
 
 namespace ShapeGame
 {
@@ -48,8 +50,35 @@ namespace ShapeGame
             //outputStream.RunningStatusEnabled = true;
             //Console.WriteLine("DEVCE INABLED {0}", outputStream.RunningStatusEnabled);
             //SendProgramChange(deviceNum);
-            outputDevice = OutputDevice.InstalledDevices[1];
-            outputDevice.Open();
+            //outputDevice = OutputDevice.InstalledDevices[0];
+            //outputDevice.Open();
+
+            //for(int i = 0; i < OutputDevice.InstalledDevices.Count; i++)
+            //{
+            //    var dev = OutputDevice.InstalledDevices[i];
+            //    Console.WriteLine("DEVICE {0}", dev.Name);
+            //}
+
+            ////SendProgramChange(3);
+            //outputDevice.SendNoteOn(Midi.Channel.Channel1, Pitch.C3, 127);
+            var access = MidiAccessManager.Default;
+            var output = access.OpenOutputAsync(access.Outputs.Last().Id).Result;
+
+            Console.WriteLine("NAME {0}", access.Outputs.Last().Name);
+            output.Send(new byte[] { MidiEvent.Program, 0x00 }, 0, 2, 0); // Strings Ensemble
+
+            //output.Send(new byte[] { 0xC0, 0x0 }, 0, 2, 0); // Piano
+            output.Send(new byte[] { MidiEvent.NoteOn, 0x40, 0x70 }, 0, 3, 0); // There are constant fields for each MIDI event
+            output.Send(new byte[] { MidiEvent.NoteOff, 0x40, 0x70 }, 0, 3, 1000);
+
+            output.Send(new byte[] { MidiEvent.Program, 0x01 }, 0, 2, 0); // Strings Ensemble
+
+            //output.Send(new byte[] { 0xC0, 0x0 }, 0, 2, 0); // Piano
+            output.Send(new byte[] { MidiEvent.NoteOn, 0x47, 0x70 }, 0, 3, 0); // There are constant fields for each MIDI event
+            output.Send(new byte[] { MidiEvent.NoteOff, 0x47, 0x70 }, 0, 3, 1000);
+            //output.Send(new byte[] { 0x90, 0x40, 0x70 }, 0, 3, 0);
+            //output.Send(new byte[] { 0x80, 0x40, 0x70 }, 0, 3, 0);
+            output.CloseAsync();
         }
         public void SendXY(int x, int y)
         {
@@ -66,7 +95,10 @@ namespace ShapeGame
         }
         public void SendProgramChange(int program)
         {
-            outputDevice.SendProgramChange(Midi.Channel.Channel1, Instrument.AcousticGrandPiano);
+
+//            output.Send(new byte[] { MidiEvent.Program, 0x00 }, 0, 2, 0); // Strings Ensemble
+
+//            outputDevice.SendProgramChange(Midi.Channel.Channel1, Instrument.AcousticGrandPiano);
         }
 
 

@@ -43,10 +43,5 @@ namespace ShapeGame
 
             _timer.Start();
         }
-
-
-
-
-
     }
 }
