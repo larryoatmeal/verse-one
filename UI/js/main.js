@@ -21,8 +21,6 @@ window.addEventListener('load', function() {
   let canvas = document.getElementById('canvas');
   let coordinates = document.getElementById('coordinates');
 
-
-
   drawGrid();
 
   // function updateCoordinates(e) {
@@ -279,15 +277,19 @@ window.addEventListener('load', function() {
   function loopOn(){
     isLooping = true;
     cycleButton.classList.remove('notActive');
+    updateLoopingText();
 
   }
   function loopOff(){
     isLooping = false;
     cycleButton.classList.add('notActive');
+    updateLoopingText();
   }
+
   function rewind(){
     seekToTime(findAdjacentBeat(wavesurfer.getCurrentTime(), -2))
   }
+
   function fastforward(){
     seekToTime(findAdjacentBeat(wavesurfer.getCurrentTime(), 2))
   }
@@ -610,6 +612,16 @@ window.addEventListener('load', function() {
     }
     else if (newInstrument == Instrument.ORGAN){
       instrumentImage.classList.add("organImage");
+    }
+  }
+
+  let isLoopingText = document.getElementById("isLoopingText");
+  function updateLoopingText(){
+    if (isLooping){
+      isLoopingText.classList.remove("hidden");
+    }
+    else {
+      isLoopingText.classList.add("hidden");
     }
   }
 

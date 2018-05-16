@@ -10,8 +10,10 @@
   text-align: center;
 }
 
-.hidden {
-  display: none;
+#isLoopingText {
+  display: block;
+  margin: auto;
+  text-align: center;
 }
 
 #canvas {
@@ -39,4 +41,8 @@
 
 .ePianoImage {
   background-image: url('../epiano.jpg');
+}
+
+.hidden {
+  display: none;
 }
