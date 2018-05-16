@@ -54,13 +54,37 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="alsa-sharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\managed-midi.1.2.0\lib\net45\alsa-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Commons.Music.Midi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\managed-midi.1.2.0\lib\net45\Commons.Music.Midi.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Kinect">
       <HintPath>$(KINECTSDK10_DIR)\Assemblies\Microsoft.Kinect.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Speech, Version=11.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
     </Reference>
+    <Reference Include="Midi, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\midi-dot-net.1.1.0\lib\net35\Midi.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Sanford.Collections, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Sanford.MidiToolkit.5.0.2\lib\net40\Sanford.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Sanford.Multimedia, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Sanford.MidiToolkit.5.0.2\lib\net40\Sanford.Multimedia.dll</HintPath>
+    </Reference>
+    <Reference Include="Sanford.Multimedia.Midi, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Sanford.MidiToolkit.5.0.2\lib\net40\Sanford.Multimedia.Midi.dll</HintPath>
+    </Reference>
+    <Reference Include="Sanford.Multimedia.Timers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Sanford.MidiToolkit.5.0.2\lib\net40\Sanford.Multimedia.Timers.dll</HintPath>
+    </Reference>
+    <Reference Include="Sanford.Threading, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Sanford.MidiToolkit.5.0.2\lib\net40\Sanford.Threading.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -95,10 +119,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CalibrationWindow.xaml.cs">
+      <DependentUpon>CalibrationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gestures\CrossGesture.cs" />
+    <Compile Include="IGestureSegment.cs" />
+    <Compile Include="Gestures\LoopGesture.cs" />
+    <Compile Include="MIDIMaster.cs" />
+    <Compile Include="MoveBackGesture.cs" />
+    <Compile Include="MoveForwardGesture.cs" />
+    <Compile Include="Gestures\RaiseLeftHandGesture.cs" />
+    <Compile Include="Gestures\RaiseRightHandGesture.cs" />
     <Compile Include="SpeechRecognizer.cs" />
     <Compile Include="TimedEvent.cs" />
     <Compile Include="TimedQueue.cs" />
+    <Compile Include="Gestures\WaveGesture.cs" />
     <Compile Include="WebServer.cs" />
+    <Page Include="CalibrationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -183,6 +223,15 @@
       <Project>{C6F9C31B-6130-4443-A5CC-EF0664552ECD}</Project>
       <Name>Microsoft.Kinect.Toolkit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bell.wav" />
+    <Resource Include="README.txt" />
+    <None Include="scratch.wav" />
+    <None Include="hollow.wav" />
+    <None Include="gong.wav" />
+    <None Include="cowbell.wav" />
+    <None Include="bike.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

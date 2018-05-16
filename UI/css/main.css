@@ -1,0 +1,20 @@
+.controlButton{
+
+    /*font-size: 3em;*/
+    margin: 0.5em;
+}
+
+.notActive{
+    opacity: 0.4;
+}
+
+.controlContainer{
+    /*margin: auto;*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.songSelectContainer{
+    margin-top: 1em;
+}

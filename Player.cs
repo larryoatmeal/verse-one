@@ -16,7 +16,8 @@ namespace ShapeGame
     using Microsoft.Kinect;
     using ShapeGame.Utils;
     using System.Diagnostics;
-   
+    using System.Windows.Media.Media3D;
+
     public class Player
     {
         private const double BoneSize = 0.01;
@@ -34,12 +35,11 @@ namespace ShapeGame
         private double playerScale;
 
         public bool gestureTriggered = false;
-        //public TimedQueue<JointCollection> jointQueue;
+        public TimedQueue<Double> angleBuffer = new TimedQueue<Double>(40);
 
+        public double offset = 0.0;
         
         public float windowSize = 3;
-       // Stopwatch stopWatch = new Stopwatch();
-
 
         //vertical min and max > threshold and horizontal min and max < 
 
@@ -60,10 +60,6 @@ namespace ShapeGame
             this.jointsBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(jointCols[mixR[i]], jointCols[mixG[i]], jointCols[mixB[i]]));
             this.bonesBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(boneCols[mixR[i]], boneCols[mixG[i]], boneCols[mixB[i]]));
             this.LastUpdated = DateTime.Now;
-            //this.stopWatch = new Stopwatch();
-            //this.stopWatch.Start();
-
-            //jointQueue = new TimedQueue<JointCollection>(windowSize);
         }
 
         public bool IsAlive { get; set; }
@@ -89,21 +85,6 @@ namespace ShapeGame
             this.playerCenter.X = (this.playerBounds.Left + this.playerBounds.Right) / 2;
             this.playerCenter.Y = (this.playerBounds.Top + this.playerBounds.Bottom) / 2;
             this.playerScale = Math.Min(this.playerBounds.Width, this.playerBounds.Height / 2);
-        }
-
-        public void DetectGesture(Microsoft.Kinect.JointCollection joints)
-        {
-            var leftHand = Microsoft.Kinect.JointType.HandLeft;
-            var elbowLeft = Microsoft.Kinect.JointType.ElbowLeft;
-            if (joints[leftHand].Position.Y > joints[elbowLeft].Position.Y && joints[leftHand].Position.X > joints[elbowLeft].Position.X)
-            {
-                MainWindow.jointQueue.Push(joints);
-                Dictionary<string, string> cmd = new Dictionary<string, string>
-                {
-                    { "Command", "pause" },
-                };
-                MainWindow.QUEUE.Push(cmd);
-            }
         }
 
         public void UpdateBonePosition(Microsoft.Kinect.JointCollection joints, JointType j1, JointType j2)
@@ -175,6 +156,8 @@ namespace ShapeGame
             {
                 this.IsAlive = false;
             }
+
+            
         }
 
         private void UpdateSegmentPosition(JointType j1, JointType j2, Segment seg)

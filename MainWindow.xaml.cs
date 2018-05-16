@@ -8,6 +8,8 @@
 // processing, displaying players on screen, and sending updated player
 // positions to the game portion for hit testing.
 
+using ShapeGame.Gestures;
+
 namespace ShapeGame
 {
     using System;
@@ -31,7 +33,8 @@ namespace ShapeGame
     using WebServer;
     using Newtonsoft.Json;
     using System.Diagnostics;
-
+    
+   
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -51,21 +54,21 @@ namespace ShapeGame
         private const int MaxShapes = 80;
         private const double MaxFramerate = 70;
         private const double MinFramerate = 15;
-        private const double MinShapeSize = 12;
-        private const double MaxShapeSize = 90;
-        private const double DefaultDropRate = 2.5;
-        private const double DefaultDropSize = 32.0;
-        private const double DefaultDropGravity = 1.0;
+        private const string CmdTogglePlay = "togglePlay";
+        private const string CmdSetloopend = "setLoopEnd";
+        private const string CmdToggleloop = "toggleLoop";
+        private const string CmdSetloopstart = "setLoopStart";
+        private const string CmdForward = "forward";
+        private const string CmdReverse = "reverse";
 
         private readonly Dictionary<int, Player> players = new Dictionary<int, Player>();
         private readonly SoundPlayer popSound = new SoundPlayer();
         private readonly SoundPlayer hitSound = new SoundPlayer();
         private readonly SoundPlayer squeezeSound = new SoundPlayer();
-        private readonly KinectSensorChooser sensorChooser = new KinectSensorChooser();
+        private static readonly SoundPlayer bellSound = new SoundPlayer();
+        private static readonly SoundPlayer scratchSound = new SoundPlayer();
 
-        private double dropRate = DefaultDropRate;
-        private double dropSize = DefaultDropSize;
-        private double dropGravity = DefaultDropGravity;
+        private readonly KinectSensorChooser sensorChooser = new KinectSensorChooser();
         private DateTime lastFrameDrawn = DateTime.MinValue;
         private DateTime predNextFrame = DateTime.MinValue;
         private double actualFrameTime;
@@ -79,10 +82,16 @@ namespace ShapeGame
         private double targetFramerate = MaxFramerate;
         private int frameCount;
         private bool runningGameThread;
-        private FallingThings myFallingThings;
+//        private FallingThings myFallingThings;
         private int playersAlive;
 
         private SpeechRecognizer mySpeechRecognizer;
+        static CrossGesture crossGesture = new CrossGesture();
+        static RaiseLeftHandGesture raiseLeftHandGesture = new RaiseLeftHandGesture();
+        static RaiseRightHandGesture raiseRightHandGesture = new RaiseRightHandGesture();
+        static WaveGesture waveGesture = new WaveGesture();
+        static MoveBackGesture moveBackGesture = new MoveBackGesture();
+        static MoveForwardGesture moveForwardGesture = new MoveForwardGesture();
 
 
         public static TimedQueue<Dictionary<string, string>> QUEUE;
@@ -92,14 +101,18 @@ namespace ShapeGame
         private static float messageWindowSize = 2;
         public static Stopwatch stopWatch = new Stopwatch();
         private static int ID = 0;
+        private float threshold = 0.9f;
 
-
+        MIDIMaster midiMaster;
         #endregion Private State
 
         #region ctor + Window Events
 
         public MainWindow()
         {
+            midiMaster = new MIDIMaster();
+            midiMaster.Setup();
+
             this.KinectSensorManager = new KinectSensorManager();
             this.KinectSensorManager.KinectSensorChanged += this.KinectSensorChanged;
             this.DataContext = this.KinectSensorManager;
@@ -120,6 +133,14 @@ namespace ShapeGame
 
             stopWatch.Start();
 
+            CalibrationButton.Click += CalibrationButtonClicked;
+        }
+
+
+        private void CalibrationButtonClicked(object sender, RoutedEventArgs e)
+        {
+            CalibrationWindow c = new CalibrationWindow();
+            this.Content = c;
         }
 
         public static string SendResponse(HttpListenerRequest request)
@@ -168,28 +189,19 @@ namespace ShapeGame
         {
             playfield.ClipToBounds = true;
 
-            this.myFallingThings = new FallingThings(MaxShapes, this.targetFramerate, NumIntraFrames);
-
             this.UpdatePlayfieldSize();
-
-            this.myFallingThings.SetGravity(this.dropGravity);
-            this.myFallingThings.SetDropRate(this.dropRate);
-            this.myFallingThings.SetSize(this.dropSize);
-            this.myFallingThings.SetPolies(PolyType.All);
-            this.myFallingThings.SetGameMode(GameMode.Off);
 
             this.popSound.Stream = Properties.Resources.Pop_5;
             this.hitSound.Stream = Properties.Resources.Hit_2;
             this.squeezeSound.Stream = Properties.Resources.Squeeze;
+            bellSound.Stream = Properties.Resources.Bell;
+            scratchSound.Stream = Properties.Resources.scratch;
 
-            this.popSound.Play();
 
             TimeBeginPeriod(TimerResolution);
             var myGameThread = new Thread(this.GameThread);
             myGameThread.SetApartmentState(ApartmentState.STA);
             myGameThread.Start();
-
-            FlyingText.NewFlyingText(this.screenRect.Width / 30, new Point(this.screenRect.Width / 2, this.screenRect.Height / 2), "Shapes!");
         }
 
         private void WindowClosing(object sender, CancelEventArgs e)
@@ -245,6 +257,14 @@ namespace ShapeGame
                                              };
             kinectSensorManager.SkeletonStreamEnabled = true;
             kinectSensorManager.KinectSensorEnabled = true;
+
+            crossGesture.GestureRecognized += CrossGestureRecognized;
+            raiseLeftHandGesture.GestureRecognized += RaiseLeftHandGestureRecognized;
+            raiseRightHandGesture.GestureRecognized += RaiseRightHandGestureRecognized;
+            waveGesture.GestureRecognized += WaveGestureRecognized;
+            moveBackGesture.GestureRecognized += MoveBackGestureRecognized;
+            moveForwardGesture.GestureRecognized += MoveForwardGestureRecognized;
+
 
             if (!kinectSensorManager.KinectSensorAppConflict)
             {
@@ -319,7 +339,14 @@ namespace ShapeGame
                             {
                                 player.IsAlive = true;
 
-                                player.DetectGesture(skeleton.Joints);
+                                crossGesture.Update(skeleton);
+                                raiseRightHandGesture.Update(skeleton);
+                                raiseLeftHandGesture.Update(skeleton);
+                                waveGesture.Update(skeleton);
+                                moveBackGesture.Update(skeleton);
+                                moveForwardGesture.Update(skeleton);
+
+                                //player.DetectGesture(skeleton.Joints);
                                 // Head, hands, feet (hit testing happens in order here)
                                 player.UpdateJointPosition(skeleton.Joints, JointType.Head);
                                 player.UpdateJointPosition(skeleton.Joints, JointType.HandLeft);
@@ -356,12 +383,76 @@ namespace ShapeGame
                                 // Spine
                                 player.UpdateBonePosition(skeleton.Joints, JointType.HipCenter, JointType.ShoulderCenter);
                             }
+
                         }
 
                         skeletonSlot++;
                     }
                 }
+
+
             }
+        }
+
+        static void SendCommand(string command, string description = "Description Here")
+        {
+            Console.WriteLine(description);
+            bellSound.Play();
+
+            Dictionary<string, string> cmd = new Dictionary<string, string>
+            {
+                { "Command", command}
+            };
+            MainWindow.QUEUE.Push(cmd);
+
+ 
+        }
+        static void CrossGestureRecognized(object sender, EventArgs e)
+        {
+            SendCommand(CmdTogglePlay, "CROSS GESTURE RECOGNIZED");
+        }
+
+        static void RaiseRightHandGestureRecognized(object sender, EventArgs e)
+        {
+            SendCommand(CmdSetloopend, "RIGHT HAND RAISED RECOGNIZED");
+        }
+
+        static void WaveGestureRecognized(object sender, EventArgs e)
+        {
+            SendCommand(CmdToggleloop, "WAVE GESTURE RECOGNIZED");
+        }
+
+        static void RaiseLeftHandGestureRecognized(object sender, EventArgs e)
+        {
+            SendCommand(CmdSetloopstart, "LEFT HAND RAISED RECOGNIZED");
+        }
+
+        static void MoveBackGestureRecognized(object sender, EventArgs e)
+        {
+            SendCommand(CmdForward, "SEEK BACKWARDS GESTURE RECOGNIZED");
+        }
+
+        static void MoveForwardGestureRecognized(object sender, EventArgs e)
+        {
+            SendCommand(CmdReverse, "SEEK FORWARD GESTURE RECOGNIZED");
+        }
+
+        static void ResetAllGestures()
+        {
+            raiseLeftHandGesture.Reset();
+            raiseRightHandGesture.Reset();
+            crossGesture.Reset();
+            waveGesture.Reset();
+            moveBackGesture.Reset();
+            moveForwardGesture.Reset();
+        }
+
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // ... Get control that raised this event.
+            var textBox = sender as TextBox;
+            //this.threshold = textBox.Text;
         }
 
         private void CheckPlayers()
@@ -381,18 +472,6 @@ namespace ShapeGame
 
             if (alive != this.playersAlive)
             {
-                if (alive == 2)
-                {
-                    this.myFallingThings.SetGameMode(GameMode.TwoPlayer);
-                }
-                else if (alive == 1)
-                {
-                    this.myFallingThings.SetGameMode(GameMode.Solo);
-                }
-                else if (alive == 0)
-                {
-                    this.myFallingThings.SetGameMode(GameMode.Off);
-                }
 
                 if ((this.playersAlive == 0) && (this.mySpeechRecognizer != null))
                 {
@@ -435,10 +514,7 @@ namespace ShapeGame
             Rect fallingBounds = this.playerBounds;
             fallingBounds.Y = 0;
             fallingBounds.Height = playfield.ActualHeight;
-            if (this.myFallingThings != null)
-            {
-                this.myFallingThings.SetBoundaries(fallingBounds);
-            }
+ 
         }
         #endregion Kinect Skeleton processing
 
@@ -492,44 +568,14 @@ namespace ShapeGame
 
         private void HandleGameTimer(int param)
         {
-            // Every so often, notify what our actual framerate is
-            if ((this.frameCount % 100) == 0)
-            {
-                this.myFallingThings.SetFramerate(1000.0 / this.actualFrameTime);
-            }
-
-            // Advance animations, and do hit testing.
-            for (int i = 0; i < NumIntraFrames; ++i)
-            {
-                foreach (var pair in this.players)
-                {
-                    HitType hit = this.myFallingThings.LookForHits(pair.Value.Segments, pair.Value.GetId());
-                    if ((hit & HitType.Squeezed) != 0)
-                    {
-                        this.squeezeSound.Play();
-                    }
-                    else if ((hit & HitType.Popped) != 0)
-                    {
-                        this.popSound.Play();
-                    }
-                    else if ((hit & HitType.Hand) != 0)
-                    {
-                        this.hitSound.Play();
-                    }
-                }
-
-                this.myFallingThings.AdvanceFrame();
-            }
-
             // Draw new Wpf scene by adding all objects to canvas
             playfield.Children.Clear();
-            this.myFallingThings.DrawFrame(this.playfield.Children);
             foreach (var player in this.players)
             {
                 player.Value.Draw(playfield.Children);
+                
             }
-
-            BannerText.Draw(playfield.Children);
+            //BannerText.Draw(playfield.Children);
             FlyingText.Draw(playfield.Children);
 
             this.CheckPlayers();
@@ -540,93 +586,14 @@ namespace ShapeGame
         private void RecognizerSaidSomething(object sender, SpeechRecognizer.SaidSomethingEventArgs e)
         {
             FlyingText.NewFlyingText(this.screenRect.Width / 30, new Point(this.screenRect.Width / 2, this.screenRect.Height / 2), e.Matched);
-            switch (e.Verb)
-            {
-                case SpeechRecognizer.Verbs.Pause:
-                    this.myFallingThings.SetDropRate(0);
-                    this.myFallingThings.SetGravity(0);
-                    break;
-                case SpeechRecognizer.Verbs.Resume:
-                    this.myFallingThings.SetDropRate(this.dropRate);
-                    this.myFallingThings.SetGravity(this.dropGravity);
-                    break;
-                case SpeechRecognizer.Verbs.Reset:
-                    this.dropRate = DefaultDropRate;
-                    this.dropSize = DefaultDropSize;
-                    this.dropGravity = DefaultDropGravity;
-                    this.myFallingThings.SetPolies(PolyType.All);
-                    this.myFallingThings.SetDropRate(this.dropRate);
-                    this.myFallingThings.SetGravity(this.dropGravity);
-                    this.myFallingThings.SetSize(this.dropSize);
-                    this.myFallingThings.SetShapesColor(System.Windows.Media.Color.FromRgb(0, 0, 0), true);
-                    this.myFallingThings.Reset();
-                    break;
-                case SpeechRecognizer.Verbs.DoShapes:
-                    this.myFallingThings.SetPolies(e.Shape);
-                    break;
-                case SpeechRecognizer.Verbs.RandomColors:
-                    this.myFallingThings.SetShapesColor(System.Windows.Media.Color.FromRgb(0, 0, 0), true);
-                    break;
-                case SpeechRecognizer.Verbs.Colorize:
-                    this.myFallingThings.SetShapesColor(e.RgbColor, false);
-                    break;
-                case SpeechRecognizer.Verbs.ShapesAndColors:
-                    this.myFallingThings.SetPolies(e.Shape);
-                    this.myFallingThings.SetShapesColor(e.RgbColor, false);
-                    break;
-                case SpeechRecognizer.Verbs.More:
-                    this.dropRate *= 1.5;
-                    this.myFallingThings.SetDropRate(this.dropRate);
-                    break;
-                case SpeechRecognizer.Verbs.Fewer:
-                    this.dropRate /= 1.5;
-                    this.myFallingThings.SetDropRate(this.dropRate);
-                    break;
-                case SpeechRecognizer.Verbs.Bigger:
-                    this.dropSize *= 1.5;
-                    if (this.dropSize > MaxShapeSize)
-                    {
-                        this.dropSize = MaxShapeSize;
-                    }
-
-                    this.myFallingThings.SetSize(this.dropSize);
-                    break;
-                case SpeechRecognizer.Verbs.Biggest:
-                    this.dropSize = MaxShapeSize;
-                    this.myFallingThings.SetSize(this.dropSize);
-                    break;
-                case SpeechRecognizer.Verbs.Smaller:
-                    this.dropSize /= 1.5;
-                    if (this.dropSize < MinShapeSize)
-                    {
-                        this.dropSize = MinShapeSize;
-                    }
-
-                    this.myFallingThings.SetSize(this.dropSize);
-                    break;
-                case SpeechRecognizer.Verbs.Smallest:
-                    this.dropSize = MinShapeSize;
-                    this.myFallingThings.SetSize(this.dropSize);
-                    break;
-                case SpeechRecognizer.Verbs.Faster:
-                    this.dropGravity *= 1.25;
-                    if (this.dropGravity > 4.0)
-                    {
-                        this.dropGravity = 4.0;
-                    }
-
-                    this.myFallingThings.SetGravity(this.dropGravity);
-                    break;
-                case SpeechRecognizer.Verbs.Slower:
-                    this.dropGravity /= 1.25;
-                    if (this.dropGravity < 0.25)
-                    {
-                        this.dropGravity = 0.25;
-                    }
-
-                    this.myFallingThings.SetGravity(this.dropGravity);
-                    break;
-            }
+//            switch (e.Verb)
+//            {
+//                case SpeechRecognizer.Verbs.Pause:
+//                    
+//                    break;
+//                case SpeechRecognizer.Verbs.Resume:
+//                    break;
+//            }
         }
 
         private void EnableAecChecked(object sender, RoutedEventArgs e)
