@@ -9,7 +9,7 @@ using Microsoft.Kinect;
 
 namespace ShapeGame.Gestures
 {
-    public class CrossGesture
+    public class CrossGesture: Gesture
     {
        
         readonly int WINDOW_SIZE = 50;
@@ -96,6 +96,11 @@ namespace ShapeGame.Gestures
             _currentSegment = 0;
             _frameCount = 0;
             lastGestureTime = 0.0f;
+        }
+
+        public override EventHandler GetGestureRecognizedHandler()
+        {
+            return GestureRecognized;
         }
     }
 

@@ -3,7 +3,7 @@ using Microsoft.Kinect;
 
 namespace ShapeGame.Gestures
 {
-    public class RaiseRightHandGesture
+    public class RaiseRightHandGesture: Gesture
     {
 
         
@@ -100,6 +100,11 @@ namespace ShapeGame.Gestures
             _currentSegment = 0;
             _frameCount = 0;
             lastGestureTime = 0.0f;
+        }
+
+        public override EventHandler GetGestureRecognizedHandler()
+        {
+            return GestureRecognized;
         }
     }
 

@@ -123,6 +123,7 @@
       <DependentUpon>CalibrationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gestures\CrossGesture.cs" />
+    <Compile Include="Gestures\Gesture.cs" />
     <Compile Include="IGestureSegment.cs" />
     <Compile Include="Gestures\LoopGesture.cs" />
     <Compile Include="MIDIMaster.cs" />
