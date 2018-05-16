@@ -2,13 +2,16 @@
 
 <html lang="en">
 <head>
+
+
   <meta charset="utf-8">
+  <link href="index.css" rel="stylesheet">
 
   <title>The HTML5 Herald</title>
   <meta name="description" content="The HTML5 Herald">
   <meta name="author" content="SitePoint">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
+  <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
 
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
@@ -33,6 +36,13 @@
     <button id="loopOffBtn">Loop Off</button>
     <button id="loopStartSetBtn">Loop Start Set</button>
     <button id="loopEndSetBtn">Loop End Set</button>
+
+    <h1 class="calibration" id="calibrationText">In Calibration Mode</h1>
+
+    <div id="container" onload='drawGrid()'>
+      <canvas id="canvas" width='500' height='500'></canvas>
+    </div>
+    <p id='showCoords'></p>
 
   </div>
 </body>
