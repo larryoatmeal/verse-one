@@ -18,26 +18,25 @@ window.addEventListener('load', function() {
 
   drawGrid();
 
-  function updateCoordinates(e) {
-    let ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    var x = e.offsetX;
-    var y = e.offsetY;
-    var coords = "X coordinates: " + x + ", Y coordinates: " + y;
-    coordinates.innerHTML = coords;
+  // function updateCoordinates(e) {
+  //   let ctx = canvas.getContext('2d');
+  //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //   var x = e.offsetX;
+  //   var y = e.offsetY;
+  //   var coords = "X coordinates: " + x + ", Y coordinates: " + y;
+  //   coordinates.innerHTML = coords;
+  //
+  //   drawGrid();
+  //   ctx.beginPath();
+  //   ctx.arc(x,y,10,0,2*Math.PI);
+  //   ctx.fillStyle = 'green';
+  //   ctx.fill();
+  //   ctx.closePath();
+  //   var coords = "X coordinates: " + x + ", Y coordinates: " + y;
+  //   coordinates.innerHTML = coords;
+  // }
 
-    drawGrid();
-    ctx.beginPath();
-    ctx.arc(x,y,10,0,2*Math.PI);
-    ctx.fillStyle = 'green';
-    ctx.fill();
-    ctx.closePath();
-    var coords = "X coordinates: " + x + ", Y coordinates: " + y;
-    coordinates.innerHTML = coords;
-  }
-
-  canvas.addEventListener("click", updateCoordinates);
-
+  // canvas.addEventListener("click", updateCoordinates);
 
 
   function loadAudio(name){
