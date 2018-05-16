@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace ShapeGame
+namespace ShapeGame.Timing
 {
 
     public class TimedEvent<T>

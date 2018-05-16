@@ -7,12 +7,11 @@
 
 //using Sanford.Multimedia.Midi;
 
-using Midi;
-using System;
-using Commons.Music.Midi;
 using System.Linq;
+using Commons.Music.Midi;
+using Midi;
 
-namespace ShapeGame
+namespace ShapeGame.MIDI
 {
     internal class MIDIMaster
     {

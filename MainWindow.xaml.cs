@@ -9,6 +9,8 @@
 // positions to the game portion for hit testing.
 
 using ShapeGame.Gestures;
+using ShapeGame.MIDI;
+using ShapeGame.Timing;
 
 namespace ShapeGame
 {
@@ -66,6 +68,11 @@ namespace ShapeGame
         private const string CmdLock = "lock";
         private const string CmdControl = "control";
         private const string CmdXY = "XY";
+        private const string StatusIsTooFar = "isTooFar";
+        private const string StatusIsTooNear = "isTooNear";
+        private const string StatusSkeletonOkay = "skeletonOkay";
+        private const string StatusSkeletonGone = "skeletonGone";
+        private const string StatusKeySkeleton = "skeletonStatus";
 
         private readonly Dictionary<int, Player> players = new Dictionary<int, Player>();
         private readonly SoundPlayer popSound = new SoundPlayer();
@@ -133,7 +140,11 @@ namespace ShapeGame
         private float padMaxX = 0.1f;
         private float padMaxY = 1f;
 
+        //okay Z
+        private float minZ = 2;
+        private float maxZ = 3;
 
+        private bool isValidState = true;
 
         MIDIMaster midiMaster;
         #endregion Private State
@@ -294,7 +305,7 @@ namespace ShapeGame
             // Application should enable all streams first.
             kinectSensorManager.ColorFormat = ColorImageFormat.RgbResolution640x480Fps30;
             kinectSensorManager.ColorStreamEnabled = true;
-
+            
             sensor.SkeletonFrameReady += this.SkeletonsReady;
             kinectSensorManager.TransformSmoothParameters = new TransformSmoothParameters
                                              {
@@ -377,7 +388,12 @@ namespace ShapeGame
                             {
                                 player = new Player(skeletonSlot);
                                 player.SetBounds(this.playerBounds);
-                                this.players.Add(skeletonSlot, player);
+
+                                if (players.Count < 1)
+                                {
+                                    this.players.Add(skeletonSlot, player);
+//                                    SendCommand(CmdSkeletonOkay);
+                                }
                             }
 
                             player.LastUpdated = DateTime.Now;
@@ -446,6 +462,11 @@ namespace ShapeGame
 
         void SendCommand(string command, bool debug = true)
         {
+            if (!isPlayerSkeletonOkay())//don't do anything if bad skeleton
+            {
+                return;
+            }
+
             if (debug)
             {
                 FlyText(command);
@@ -458,6 +479,11 @@ namespace ShapeGame
                 { "Command", command}
             };
             MainWindow.QUEUE.Push(cmd);
+        }
+
+        void SetStatus(string key, string value)
+        {
+            MainWindow.QUEUE.status[key] = value;
         }
 
         void SendXY(int x, int y)
@@ -491,7 +517,9 @@ namespace ShapeGame
                 {
                     // Player left scene since we aren't tracking it anymore, so remove from dictionary
                     this.players.Remove(player.Value.GetId());
+                    SetStatus(StatusKeySkeleton, StatusSkeletonGone);
                     break;
+
                 }
             }
 
@@ -620,11 +648,37 @@ namespace ShapeGame
         private void ProcessSkeleton(Skeleton skeleton)
         {
 
-            DATA1.Content = $"Left Hand X: {skeleton.Joints[JointType.HandLeft].Position.X}";
+//            DATA1.Content = $"Left Hand X: {skeleton.Joints[JointType.HandLeft].Position.X}";
             DATA2.Content = $"Left Hand Y: {skeleton.Joints[JointType.HandLeft].Position.Y}";
+            var positionZ = skeleton.Joints[JointType.ShoulderCenter].Position.Z;
+            DATA1.Content = $"CENTER Z: {positionZ}";
+
+            //constraints
+            bool isTooFar = positionZ > maxZ;
+            bool isTooNear = positionZ < minZ;
+
+            if (isTooFar)
+            {
+                SetStatus(StatusKeySkeleton, StatusIsTooFar);
+            }
+
+            if (isTooNear)
+            {
+                SetStatus(StatusKeySkeleton, StatusIsTooNear);
+            }
+
+            bool willBeValid = !(isTooNear || isTooFar);
+            if (willBeValid && players.Count > 0 && players[players.Keys.ElementAt(0)].IsAlive)
+            {
+                SetStatus(StatusKeySkeleton, StatusSkeletonOkay);
+            }
+
+            isValidState = willBeValid;
+
 
             var xy = GetXYPadData(skeleton);
             SendXY(xy.Item1, xy.Item2);
+            midiMaster.SendXY((byte) xy.Item1, (byte) xy.Item2);
 
             DATA3.Content = $"X: {xy.Item1}";
             DATA4.Content = $"Y: {xy.Item2}";
@@ -717,6 +771,12 @@ namespace ShapeGame
                 ? EchoCancellationMode.CancellationAndSuppression
                 : EchoCancellationMode.None;
         }
+
+        private bool isPlayerSkeletonOkay()
+        {
+            return QUEUE.status.ContainsKey(StatusKeySkeleton) && QUEUE.status[StatusKeySkeleton] == StatusSkeletonOkay;
+        }
+
 
         #endregion Kinect Speech processing
 

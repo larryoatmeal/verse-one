@@ -4,20 +4,20 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 
-namespace ShapeGame
+namespace ShapeGame.Timing
 {
     public class TimedQueue<T>
     {
         public Queue<TimedEvent<T>> queue;
-
+        public Dictionary<string, string> status;
         int idCounter = 0;
         float windowSize;
         public TimedQueue(float windowSize)
         {
             queue = new Queue<TimedEvent<T>>();
+            status = new Dictionary<string, string>();
             this.windowSize = windowSize;
         }
 
