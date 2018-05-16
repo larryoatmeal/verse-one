@@ -112,6 +112,7 @@ window.addEventListener('load', function() {
     let loopStartSetBtn = document.getElementById("loopStartSetBtn");
     let loopEndSetBtn = document.getElementById("loopEndSetBtn");
     let hostIpInput = document.getElementById("hostIp");
+    let calibrationText = document.getElementById("calibrationText");
 
     const processedMessages = new Set();
 
@@ -148,6 +149,15 @@ window.addEventListener('load', function() {
         seekToTime(0);
         pause();
     });
+
+    function setCalibrationModeOn(){
+      calibrationText.classList.add("hidden");
+    }
+
+    function setCalibrationModeOff(){
+      calibrationText.classList.remove("hidden");
+    }
+
     function togglePlay(){
 
 
@@ -443,6 +453,12 @@ window.addEventListener('load', function() {
                 else if(command === 'reverse'){
                     rewind();
                 }
+                else if(command === 'calibrateModeOn'){
+                  setCalibrationModeOn();
+                }
+                else if(command === 'calibrateModeOff'){
+                  setCalibrationModeOff();
+                }
 
                 processedMessages.add(id);
             }
@@ -493,4 +509,3 @@ window.addEventListener('load', function() {
 
 
 });
-

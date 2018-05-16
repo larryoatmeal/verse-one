@@ -2,11 +2,15 @@
 
 <html lang="en">
 <head>
+
+
   <meta charset="utf-8">
+  <link href="index.css" rel="stylesheet">
 
   <title>Verse One</title>
   <meta name="description" content="Verse One">
   <meta name="author" content="SitePoint">
+
 
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
@@ -47,6 +51,13 @@
     <button id="loopStartSetBtn">Loop Start Set</button>
     <button id="loopEndSetBtn">Loop End Set</button>
 
+    <h1 class="calibration" id="calibrationText">In Calibration Mode</h1>
+
+    <div id="container" onload='drawGrid()'>
+      <canvas id="canvas" width='500' height='500'></canvas>
+    </div>
+    <p id='showCoords'></p>
+
   </div>
   <div class="controlContainer" >
     <button class = "controlButton btn btn-success btn-lg" id="playStopButton"><i id="playIcon" class="fas fa-play"></i><i style="display: none" id="pauseIcon" class="fas fa-pause"></i></button>
@@ -64,5 +75,4 @@
 </div>
 
 </body>
-
 </html>

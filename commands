@@ -1,0 +1,8 @@
+play
+pause
+loopOn
+loopOff
+setLoopStart
+setLoopEnd
+calibrateModeOff
+calibrateModeOn
