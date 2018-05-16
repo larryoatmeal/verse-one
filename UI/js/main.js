@@ -494,10 +494,10 @@ window.addEventListener('load', function() {
         else if(command === 'calibrateModeOff'){
           setCalibrationModeOff();
         }
-        else if(command.includes("xy")){
+        else if(command.includes("XY")){
           let params = commands.split(",");
-          let x = params[1];
-          let y = params[2];
+          let x = parseInt(params[1]);
+          let y = parseInt(params[2]);
           updateCoordinates(x, y);
         }
         else if (command == "patchOne"){
