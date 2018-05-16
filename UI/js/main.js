@@ -252,6 +252,11 @@ window.addEventListener('load', function() {
     }
   }
 
+  function sendProgramChange(program){
+    if(midiOut){
+      midiOut.sendProgramChange(program);
+    }
+  }
 
   wavesurfer.on('finish', function () {
     console.log("FINISHED PLAYING");
@@ -575,12 +580,15 @@ window.addEventListener('load', function() {
         }
 
         else if (command == "patchOne"){
+          sendProgramChange(0);
           updateInstrument(Instrument.PIANO);
         }
         else if (command == "patchTwo"){
+          sendProgramChange(1);
           updateInstrument(Instrument.ELECTRIC_PIANO);
         }
         else if (command == "patchThree"){
+          sendProgramChange(2);
           updateInstrument(Instrument.ORGAN);
         }
 
@@ -701,7 +709,7 @@ window.addEventListener('load', function() {
 
     drawGrid();
     ctx.beginPath();
-    ctx.arc(x * 4,y * 4,10,0,2*Math.PI);
+    ctx.arc(x * 4,(127 - y) * 4,10,0,2*Math.PI);
     ctx.fillStyle = 'green';
     ctx.fill();
     ctx.closePath();
