@@ -1,6 +1,6 @@
 #calibrationText {
   display: block;
-  font-size: 4vw;
+  font-size: 3vh;
   text-align: center;
   color: red;
   margin: auto;
@@ -18,7 +18,7 @@ margin-top: 10px;
   margin: auto;
   text-align: center;
   color: green;
-  font-size: 4vw;
+  font-size: 3vh;
 }
 
 #canvas {
@@ -38,10 +38,18 @@ margin-top: 10px;
 
 #notifications {
   width: 100%;
-  margin-top: 10px;
-  height: 10vw;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  height: 10vh;
 }
 
+#skeletonText {
+  display: block;
+  margin: auto;
+  text-align: center;
+  font-size: 3vh;
+}
 .organImage {
   background-image: url('../organ.jpg');
 }
@@ -78,4 +86,12 @@ margin-top: 10px;
 
 .front {
   z-index: 1000;
+}
+
+.valid {
+  color: green;
+}
+
+.invalid {
+  color: red;
 }

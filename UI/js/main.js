@@ -7,6 +7,12 @@ let Instrument = {
   ORGAN: "Organ",
 };
 
+let SkeletonPositions = {
+  TOO_FAR: "You're too far! Please move closer to the Kinect.",
+  TOO_NEAR: "You're too near! Please move further from the Kinect",
+  OKAY: "Skeleton detected.",
+};
+
 window.addEventListener('load', function() {
   //console.log('All assets are loaded')
   let wavesurfer = WaveSurfer.create({
@@ -152,6 +158,7 @@ window.addEventListener('load', function() {
   //console.log("Pinging", hostIp);
 
   let isLooping = false;
+  let skeletonDetected = false;
 
   let loopMs = 500;
 
@@ -497,7 +504,7 @@ window.addEventListener('load', function() {
           setCalibrationModeOff();
         }
         else if(command.includes("XY")){
-          let params = commands.split(",");
+          let params = command.split(",");
           let x = parseInt(params[1]);
           let y = parseInt(params[2]);
           updateCoordinates(x, y);
@@ -510,6 +517,17 @@ window.addEventListener('load', function() {
         }
         else if (command == "patchThree"){
           updateInstrument(Instrument.ORGAN);
+        }
+        else if (command == "isTooFar"){
+          skeletonDetected = false;
+          updateSkeletonText(SkeletonPositions.TOO_FAR);
+        }
+        else if (command == "isTooNear"){
+          skeletonDetected = false;
+          updateSkeletonText(SkeletonPositions.TOO_NEAR);
+        } else if (command == "skeletonOkay"){
+          skeletonDetected = true;
+          updateSkeletonText(SkeletonPositions.OKAY);
         }
         processedMessages.add(id);
       }
@@ -618,6 +636,7 @@ window.addEventListener('load', function() {
   }
 
   let isLoopingText = document.getElementById("isLoopingText");
+
   function updateLoopingText(){
     if (isLooping){
       isLoopingText.classList.remove("hidden");
@@ -627,4 +646,20 @@ window.addEventListener('load', function() {
     }
   }
 
+
+
 });
+
+
+function updateSkeletonText(message){
+  let skeletonText = document.getElementById("skeletonText");
+
+  skeletonText.innerHTML = message;
+  if (message == SkeletonPositions.OKAY){
+    skeletonText.classList.remove("invalid");
+    skeletonText.classList.add("valid");
+  } else {
+    skeletonText.classList.remove("valid");
+    skeletonText.classList.add("invalid");
+  }
+}
