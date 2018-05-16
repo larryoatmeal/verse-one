@@ -127,8 +127,8 @@
     <Compile Include="IGestureSegment.cs" />
     <Compile Include="Gestures\LoopGesture.cs" />
     <Compile Include="MIDIMaster.cs" />
-    <Compile Include="MoveBackGesture.cs" />
-    <Compile Include="MoveForwardGesture.cs" />
+    <Compile Include="Gestures\MoveBackGesture.cs" />
+    <Compile Include="Gestures\MoveForwardGesture.cs" />
     <Compile Include="Gestures\RaiseLeftHandGesture.cs" />
     <Compile Include="Gestures\RaiseRightHandGesture.cs" />
     <Compile Include="SpeechRecognizer.cs" />

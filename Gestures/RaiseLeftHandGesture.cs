@@ -97,9 +97,9 @@ namespace ShapeGame.Gestures
             lastGestureTime = 0.0f;
         }
 
-        public override EventHandler GetGestureRecognizedHandler()
+        public override void AddListener(EventHandler e)
         {
-            return GestureRecognized;
+            GestureRecognized += e;
         }
     }
 

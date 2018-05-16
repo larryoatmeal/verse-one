@@ -10,6 +10,7 @@ namespace ShapeGame.Gestures
 {
     public abstract class Gesture
     {
-        public abstract EventHandler GetGestureRecognizedHandler();
+        public abstract void AddListener(EventHandler e);
+
     }
 }

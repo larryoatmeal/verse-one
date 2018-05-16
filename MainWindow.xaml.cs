@@ -93,9 +93,18 @@ namespace ShapeGame
         static MoveBackGesture moveBackGesture = new MoveBackGesture();
         static MoveForwardGesture moveForwardGesture = new MoveForwardGesture();
 
-
         public static TimedQueue<Dictionary<string, string>> QUEUE;
         public static TimedQueue<JointCollection> jointQueue;
+
+        public static Dictionary<Gesture, string> gestureMap = new Dictionary<Gesture, string>()
+        {
+            {crossGesture, CmdTogglePlay},
+            {raiseLeftHandGesture, CmdSetloopstart },
+            {raiseRightHandGesture, CmdSetloopend },
+            {waveGesture, CmdToggleloop },
+            {moveForwardGesture, CmdForward },
+            {moveBackGesture, CmdReverse }
+        };
 
         private float jointWindowSize = 3;
         private static float messageWindowSize = 2;
@@ -258,13 +267,12 @@ namespace ShapeGame
             kinectSensorManager.SkeletonStreamEnabled = true;
             kinectSensorManager.KinectSensorEnabled = true;
 
-            crossGesture.GestureRecognized += CrossGestureRecognized;
-            raiseLeftHandGesture.GestureRecognized += RaiseLeftHandGestureRecognized;
-            raiseRightHandGesture.GestureRecognized += RaiseRightHandGestureRecognized;
-            waveGesture.GestureRecognized += WaveGestureRecognized;
-            moveBackGesture.GestureRecognized += MoveBackGestureRecognized;
-            moveForwardGesture.GestureRecognized += MoveForwardGestureRecognized;
-
+            foreach (var keyValuePair in gestureMap)
+            {
+                var gesture = keyValuePair.Key;
+                var cmd = keyValuePair.Value;
+                gesture.AddListener((s, e) => SendCommand(cmd));
+            }
 
             if (!kinectSensorManager.KinectSensorAppConflict)
             {
@@ -394,9 +402,9 @@ namespace ShapeGame
             }
         }
 
-        static void SendCommand(string command, string description = "Description Here")
+        static void SendCommand(string command)
         {
-            Console.WriteLine(description);
+            Console.WriteLine(command);
             bellSound.Play();
 
             Dictionary<string, string> cmd = new Dictionary<string, string>
@@ -407,35 +415,35 @@ namespace ShapeGame
 
  
         }
-        static void CrossGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdTogglePlay, "CROSS GESTURE RECOGNIZED");
-        }
-
-        static void RaiseRightHandGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdSetloopend, "RIGHT HAND RAISED RECOGNIZED");
-        }
-
-        static void WaveGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdToggleloop, "WAVE GESTURE RECOGNIZED");
-        }
-
-        static void RaiseLeftHandGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdSetloopstart, "LEFT HAND RAISED RECOGNIZED");
-        }
-
-        static void MoveBackGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdForward, "SEEK BACKWARDS GESTURE RECOGNIZED");
-        }
-
-        static void MoveForwardGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdReverse, "SEEK FORWARD GESTURE RECOGNIZED");
-        }
+//        static void CrossGestureRecognized(object sender, EventArgs e)
+//        {
+//            SendCommand(CmdTogglePlay, "CROSS GESTURE RECOGNIZED");
+//        }
+//
+//        static void RaiseRightHandGestureRecognized(object sender, EventArgs e)
+//        {
+//            SendCommand(CmdSetloopend, "RIGHT HAND RAISED RECOGNIZED");
+//        }
+//
+//        static void WaveGestureRecognized(object sender, EventArgs e)
+//        {
+//            SendCommand(CmdToggleloop, "WAVE GESTURE RECOGNIZED");
+//        }
+//
+//        static void RaiseLeftHandGestureRecognized(object sender, EventArgs e)
+//        {
+//            SendCommand(CmdSetloopstart, "LEFT HAND RAISED RECOGNIZED");
+//        }
+//
+//        static void MoveBackGestureRecognized(object sender, EventArgs e)
+//        {
+//            SendCommand(CmdForward, "SEEK BACKWARDS GESTURE RECOGNIZED");
+//        }
+//
+//        static void MoveForwardGestureRecognized(object sender, EventArgs e)
+//        {
+//            SendCommand(CmdReverse, "SEEK FORWARD GESTURE RECOGNIZED");
+//        }
 
         static void ResetAllGestures()
         {
