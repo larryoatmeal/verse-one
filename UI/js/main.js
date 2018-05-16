@@ -161,13 +161,17 @@ window.addEventListener('load', function() {
   let isLooping = false;
   let skeletonDetected = false;
 
-  let loopMs = 20;
+  let loopMs = 10;
 
   let loopStart = 0;
   let loopEnd = 1000;
   let beatAlign = true;
   //API
   //loadAudio('snow');
+  let xySmoothSize = 20;
+  let xSmoother = new Smoother(xySmoothSize);
+  let ySmoother = new Smoother(xySmoothSize);
+
 
   document.getElementById("playStopButton").addEventListener("click", togglePlay)
   var cycleButton = document.getElementById("cycleOnOffButton");
@@ -542,9 +546,16 @@ window.addEventListener('load', function() {
       let params = xyStatus.split(",");
       let x = parseInt(params[0]);
       let y = parseInt(params[1]);
-      updateCoordinates(x, y);
+
+      xSmoother.feed(x);
+      ySmoother.feed(y);
+
+      let xFinal = xSmoother.lowpassValue;
+      let yFinal = ySmoother.lowpassValue;
+
+      updateCoordinates(xFinal, yFinal);
     }
-    
+
   }
 
 
