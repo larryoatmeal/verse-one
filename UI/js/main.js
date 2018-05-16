@@ -342,6 +342,7 @@ window.addEventListener('load', function() {
     if(!divA){
       divA = document.createElement("div");
       divA.classList.add("btn");
+      divA.classList.add("front");
       divA.classList.add("btn-primary");
       divA.textContent = "A";
       divA.style.position = 'absolute';
@@ -353,6 +354,7 @@ window.addEventListener('load', function() {
     if(!divB){
       divB = document.createElement("div");
       divB.classList.add("btn");
+      divB.classList.add("front");
       divB.classList.add("btn-info");
       divB.textContent = "B";
       divB.style.position = 'absolute';

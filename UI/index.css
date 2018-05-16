@@ -5,6 +5,7 @@
   color: red;
   margin: auto;
 
+margin-top: 10px;
 }
 
 #instrumentText {
@@ -37,6 +38,7 @@
 
 #notifications {
   width: 100%;
+  margin-top: 10px;
   height: 10vw;
 }
 
@@ -72,4 +74,8 @@
 .flex-item {
   padding: 5px;
   text-align: center;
+}
+
+.front {
+  z-index: 1000;
 }
