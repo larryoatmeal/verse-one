@@ -152,6 +152,7 @@ window.addEventListener('load', function() {
   //console.log("Pinging", hostIp);
 
   let isLooping = false;
+  let skeletonDetected = false;
 
   let loopMs = 500;
 
@@ -497,7 +498,7 @@ window.addEventListener('load', function() {
           setCalibrationModeOff();
         }
         else if(command.includes("XY")){
-          let params = commands.split(",");
+          let params = command.split(",");
           let x = parseInt(params[1]);
           let y = parseInt(params[2]);
           updateCoordinates(x, y);
@@ -510,6 +511,14 @@ window.addEventListener('load', function() {
         }
         else if (command == "patchThree"){
           updateInstrument(Instrument.ORGAN);
+        }
+        else if (command == "skeletonGood"){
+          skeletonDetected = true;
+          updateSkeletonText();
+        }
+        else if (command == "skeletonBad"){
+          skeletonDetected = true;
+          updateSkeletonText();
         }
         processedMessages.add(id);
       }
@@ -618,12 +627,24 @@ window.addEventListener('load', function() {
   }
 
   let isLoopingText = document.getElementById("isLoopingText");
+
   function updateLoopingText(){
     if (isLooping){
       isLoopingText.classList.remove("hidden");
     }
     else {
       isLoopingText.classList.add("hidden");
+    }
+  }
+
+  let skeletonText = document.getElementById("skeletonText");
+
+  function updateSkeletonText(){
+    if (skeletonDetected){
+      skeletonText.classList.remove("hidden");
+    }
+    else {
+      skeletonText.classList.add("hidden");
     }
   }
 
