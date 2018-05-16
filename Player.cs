@@ -4,6 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+using ShapeGame.Timing;
+
 namespace ShapeGame
 {
     using System;
