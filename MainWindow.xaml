@@ -22,8 +22,23 @@
                 <Button Name="CalibrationButton" Width="160" Height="40" Margin="0,0,19.2,25" VerticalAlignment="Bottom" HorizontalAlignment="Right" RenderTransformOrigin="0.674,-0.072">Calibrate!</Button>
                 <TextBox Name="Threshold" Width="71" Height="35" Margin="0,0,19.2,85" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                 </TextBox>
-                <kt:KinectColorViewer Margin="0,18,19,0" HorizontalAlignment="Right" Width="160" Height="120" VerticalAlignment="Top" KinectSensorManager="{Binding}"/>
+
+
+                <kt:KinectColorViewer Margin="440,18,19.2,0" Height="120" VerticalAlignment="Top" KinectSensorManager="{Binding}"/>
                 <toolkit:KinectSensorChooserUI x:Name="SensorChooserUI" IsListening="True"  HorizontalAlignment="Center" VerticalAlignment="Top" />
+                <Label Foreground ="White" FontSize="30" Width="430" Height="50" Margin="10,-5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA1" Name="DATA1"/>
+                <Label Foreground ="White" FontSize="30" Width="430" Height="50" Margin="10,45,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA2" x:Name="DATA2"/>
+                <Label Foreground ="White" FontSize="30" Width="430" Height="50" Margin="10,95,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA3" x:Name="DATA3"/>
+                <Label Foreground ="White" FontSize="30" Width="430" Height="50" Margin="10,143,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA4" x:Name="DATA4"/>
+
+                <TextBox Name="ENTRY4" Margin="84,630,465.2,17"></TextBox>
+                <TextBox Name="ENTRY3" Margin="84,561,465.2,86"/>
+                <TextBox Name="ENTRY2" Margin="84,494,465.2,153"/>
+                <TextBox Name="ENTRY1" Margin="84,426,465.2,221"/>
+                <Label Foreground ="White" FontSize="15" Width="57" Height="41" Margin="22,426,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA4" x:Name="ENTRY1_LABEL"/>
+                <Label Foreground ="White" FontSize="15" Width="57" Height="41" Margin="22,494,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA4" x:Name="ENTRY2_LABEL"/>
+                <Label Foreground ="White" FontSize="15" Width="57" Height="41" Margin="22,561,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA4" x:Name="ENTRY3_LABEL"/>
+                <Label Foreground ="White" FontSize="15" Width="57" Height="41" Margin="22,630,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA4" x:Name="ENTRY4_LABEL"/>
             </Grid>
             <CheckBox x:Name="enableAec" Foreground="White" FontSize="20" Margin="19,0,0,18" HorizontalAlignment="Left" VerticalAlignment="Bottom" Visibility="Collapsed" Checked="EnableAecChecked" Unchecked="EnableAecChecked" IsEnabled="False">
                 Enable Echo Cancellation on Default Speakers
