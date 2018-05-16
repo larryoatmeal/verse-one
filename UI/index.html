@@ -66,14 +66,20 @@
 
     <h1 id="loadingBeatDetect">PERFORMING BEAT DETECTION, PLEASE WAIT...</h1>
     <h1 id="loadingRegular">LOADING SONG </h1>
-    <h1 id="instrumentText">Current instrument: <span id="instrumentName">Piano</span></h1>
-    <div id="instrumentImage" class="pianoImage"></div>
     <h1 id="calibrationText">In Calibration Mode</h1>
     <h1 id="isLoopingText">Currently looping</h1>
 
     <p id="coordinates"></p>
 
-    <canvas id="canvas" width='508' height='508'></canvas>
+    <div class="flex-container-row">
+      <div class="flex-container-column">
+        <h1 id="instrumentText" class="flex-item">Current instrument: <span id="instrumentName">Piano</span></h1>
+        <div id="instrumentImage" class="pianoImage flex-item"></div>
+      </div>
+      <canvas class="flex-item" id="canvas" width='508' height='508'></canvas>
+
+    </div>
+
 
   </div>
 

@@ -46,3 +46,21 @@
 .hidden {
   display: none;
 }
+
+.flex-container-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.flex-container-column {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.flex-item {
+  padding: 5px;
+  text-align: center;
+}
