@@ -11,6 +11,7 @@ let SkeletonPositions = {
   TOO_FAR: "You're too far! Please move closer to the Kinect.",
   TOO_NEAR: "You're too near! Please move further from the Kinect",
   OKAY: "Skeleton detected.",
+  GONE: "Skeleton not detected."
 };
 
 window.addEventListener('load', function() {
@@ -160,7 +161,7 @@ window.addEventListener('load', function() {
   let isLooping = false;
   let skeletonDetected = false;
 
-  let loopMs = 500;
+  let loopMs = 20;
 
   let loopStart = 0;
   let loopEnd = 1000;
@@ -503,12 +504,7 @@ window.addEventListener('load', function() {
         else if(command === 'calibrateModeOff'){
           setCalibrationModeOff();
         }
-        else if(command.includes("XY")){
-          let params = command.split(",");
-          let x = parseInt(params[1]);
-          let y = parseInt(params[2]);
-          updateCoordinates(x, y);
-        }
+
         else if (command == "patchOne"){
           updateInstrument(Instrument.PIANO);
         }
@@ -518,20 +514,37 @@ window.addEventListener('load', function() {
         else if (command == "patchThree"){
           updateInstrument(Instrument.ORGAN);
         }
-        else if (command == "isTooFar"){
-          skeletonDetected = false;
-          updateSkeletonText(SkeletonPositions.TOO_FAR);
-        }
-        else if (command == "isTooNear"){
-          skeletonDetected = false;
-          updateSkeletonText(SkeletonPositions.TOO_NEAR);
-        } else if (command == "skeletonOkay"){
-          skeletonDetected = true;
-          updateSkeletonText(SkeletonPositions.OKAY);
-        }
+
         processedMessages.add(id);
       }
     });
+
+
+    let status = data.status;
+    let skeletonStatus = status.skeletonStatus;
+    if (skeletonStatus == "isTooFar"){
+      skeletonDetected = false;
+      updateSkeletonText(SkeletonPositions.TOO_FAR);
+    }
+    else if (skeletonStatus == "isTooNear"){
+      skeletonDetected = false;
+      updateSkeletonText(SkeletonPositions.TOO_NEAR);
+    } else if (skeletonStatus == "skeletonOkay"){
+      skeletonDetected = true;
+      updateSkeletonText(SkeletonPositions.OKAY);
+    }else{
+      skeletonDetected = false;
+      updateSkeletonText(SkeletonPositions.GONE);
+    }
+
+    let xyStatus = status.XY;
+    if(xyStatus){
+      let params = xyStatus.split(",");
+      let x = parseInt(params[0]);
+      let y = parseInt(params[1]);
+      updateCoordinates(x, y);
+    }
+    
   }
 
 

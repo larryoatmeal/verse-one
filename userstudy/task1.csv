@@ -1,0 +1,90 @@
+loopStart,y
+forward,y
+backward,y
+loopEnd,y
+loopStart,y
+backward,y
+cycle mode,y
+loopEnd,n
+cycle mode,y
+loopEnd,y
+cycle mode,y
+forward,y
+play,y
+forward,y
+backward,y
+play,y
+loopStart,y
+play,n
+backward,n
+loopStart,y
+loopEnd,n
+cycle mode,y
+forward,y
+loopStart,y
+cycle mode,y
+play,y
+backward,n
+forward,y
+backward,y
+forward,y
+play,y
+loopEnd,y
+play,y
+loopStart,y
+loopEnd,y
+cycle mode,y
+loopEnd,y
+backward,y
+cycle mode,y
+play,y
+loopStart,y
+forward,y
+play,y
+cycle mode,y
+backward,y
+forward,n
+loopStart,n
+cycle mode,y
+forward,n
+loopEnd,y
+play,y
+loopStart,y
+backward,y
+loopEnd,y
+cycle mode,n
+forward,n
+play,y
+loopStart,y
+backward,n
+forward,n
+backward,n
+play,y
+cycle mode,n
+loopStart,y
+loopEnd,y
+cycle mode,y
+play,y
+loopEnd,y
+backward,n
+loopStart,y
+forward,n
+loopEnd,y
+cycle mode,y
+forward,y
+loopEnd,y
+loopStart,y
+play,n
+loopStart,y
+play,y
+backward,y
+play,y
+cycle mode,y
+backward,y
+forward,y
+backward,n
+cycle mode,y
+loopStart,y
+loopEnd,y
+forward,y
+loopEnd,y
