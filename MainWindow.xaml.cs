@@ -65,6 +65,7 @@ namespace ShapeGame
         private const string CmdPatchThree = "patchThree";
         private const string CmdLock = "lock";
         private const string CmdControl = "control";
+        private const string CmdXY = "XY";
 
         private readonly Dictionary<int, Player> players = new Dictionary<int, Player>();
         private readonly SoundPlayer popSound = new SoundPlayer();
@@ -126,6 +127,14 @@ namespace ShapeGame
         private static int ID = 0;
         private float threshold = 0.9f;
 
+        //XY pad
+        private float padMinX = -0.4f;
+        private float padMinY = 0.5f;
+        private float padMaxX = 0.1f;
+        private float padMaxY = 1f;
+
+
+
         MIDIMaster midiMaster;
         #endregion Private State
 
@@ -157,6 +166,23 @@ namespace ShapeGame
             stopWatch.Start();
 
             CalibrationButton.Click += CalibrationButtonClicked;
+
+
+            init();
+        }
+
+        private void init()
+        {
+            ENTRY1_LABEL.Content = "MINX";
+            ENTRY2_LABEL.Content = "MAXX";
+            ENTRY3_LABEL.Content = "MINY";
+            ENTRY4_LABEL.Content = "MAXY";
+
+            ENTRY1.Text = padMinX.ToString();
+            ENTRY2.Text = padMaxX.ToString();
+            ENTRY3.Text = padMinY.ToString();
+            ENTRY4.Text = padMaxY.ToString();
+
         }
 
 
@@ -176,7 +202,7 @@ namespace ShapeGame
         {
             QUEUE = new TimedQueue<Dictionary<string, string>>(messageWindowSize);
 
-            var ws = new WebServer(SendResponse, "http://localhost:8080/test/");
+            var ws = new WebServer(SendResponse, "http://*:8080/test/");
             ws.Run();
             Console.WriteLine("A simple webserver.");
         }
@@ -404,6 +430,8 @@ namespace ShapeGame
 
                                 // Spine
                                 player.UpdateBonePosition(skeleton.Joints, JointType.HipCenter, JointType.ShoulderCenter);
+
+                                ProcessSkeleton(skeleton);
                             }
 
                         }
@@ -416,19 +444,25 @@ namespace ShapeGame
             }
         }
 
-        void SendCommand(string command)
+        void SendCommand(string command, bool debug = true)
         {
-            FlyText(command);
-            Console.WriteLine(command);
-            bellSound.Play();
+            if (debug)
+            {
+                FlyText(command);
+                Console.WriteLine(command);
+                bellSound.Play();
+            }
 
             Dictionary<string, string> cmd = new Dictionary<string, string>
             {
                 { "Command", command}
             };
             MainWindow.QUEUE.Push(cmd);
+        }
 
- 
+        void SendXY(int x, int y)
+        {
+            SendCommand($"{CmdXY},{x},{y}", false);
         }
 
         static void ResetAllGestures()
@@ -583,7 +617,62 @@ namespace ShapeGame
 
         }
 
+        private void ProcessSkeleton(Skeleton skeleton)
+        {
 
+            DATA1.Content = $"Left Hand X: {skeleton.Joints[JointType.HandLeft].Position.X}";
+            DATA2.Content = $"Left Hand Y: {skeleton.Joints[JointType.HandLeft].Position.Y}";
+
+            var xy = GetXYPadData(skeleton);
+            SendXY(xy.Item1, xy.Item2);
+
+            DATA3.Content = $"X: {xy.Item1}";
+            DATA4.Content = $"Y: {xy.Item2}";
+        }
+
+        private Tuple<int, int> GetXYPadData(Skeleton skeleton)
+        {
+            
+
+            float minX = strToFloat(ENTRY1.Text);
+            float maxX = strToFloat(ENTRY2.Text);
+            float minY = strToFloat(ENTRY3.Text);
+            float maxY = strToFloat(ENTRY4.Text);
+
+            float x = scale(minX, maxX, skeleton.Joints[JointType.HandLeft].Position.X);
+            float y = scale(minY, maxY, skeleton.Joints[JointType.HandLeft].Position.Y);
+            int xMidi = (int) (127 * x);
+            int yMidi = (int) (127 * y);
+            return Tuple.Create(xMidi, yMidi);
+        }
+
+        private float scale(float min, float max, float x)
+        {
+            if (x < min)
+            {
+                return 0;
+            }
+
+            if (x > max)
+            {
+                return 1;
+            }
+            var scaled = (x - min) / (max - min);
+            return scaled;
+        }
+        private float strToFloat(string str)
+        {
+            if (str == "")
+            {
+                return 0;
+            }
+            else
+            {
+                return float.Parse(str);
+            }
+        }
+
+        
 
         #region Kinect Speech processing
         private void RecognizerSaidSomething(object sender, SpeechRecognizer.SaidSomethingEventArgs e)
@@ -591,6 +680,19 @@ namespace ShapeGame
             if (speechMap.ContainsKey(e.Verb))
             {
                 SendCommand(speechMap[e.Verb]);
+            }
+
+            switch (e.Verb)
+            {
+                case SpeechRecognizer.Verbs.PatchOne:
+                    midiMaster.SendProgramChange(0x00);
+                    break;
+                case SpeechRecognizer.Verbs.PatchTwo:
+                    midiMaster.SendProgramChange(0x01);
+                    break;
+                case SpeechRecognizer.Verbs.PatchThree:
+                    midiMaster.SendProgramChange(0x02);
+                    break;
             }
 
 //            switch (e.Verb)
@@ -617,5 +719,7 @@ namespace ShapeGame
         }
 
         #endregion Kinect Speech processing
+
+        
     }
 }
