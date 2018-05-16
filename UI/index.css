@@ -1,15 +1,81 @@
-.calibration {
+#calibrationText {
   display: block;
-  font-size: 60px;
+  font-size: 4vw;
   text-align: center;
   color: red;
+  margin: auto;
+
+margin-top: 10px;
+}
+
+#instrumentText {
+  display: block;
+  text-align: center;
+}
+
+#isLoopingText {
+  display: block;
+  margin: auto;
+  text-align: center;
+  color: green;
+  font-size: 4vw;
+}
+
+#canvas {
+  border: 1px solid black;
+  margin: auto;
+  display: flex;
+}
+
+#instrumentImage {
+  width: 500px;
+  height: 500px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: flex;
+  margin: auto;
+}
+
+#notifications {
+  width: 100%;
+  margin-top: 10px;
+  height: 10vw;
+}
+
+.organImage {
+  background-image: url('../organ.jpg');
+}
+
+.pianoImage {
+  background-image: url('../piano.jpg');
+}
+
+.ePianoImage {
+  background-image: url('../epiano.jpg');
 }
 
 .hidden {
   display: none;
 }
 
-#canvas {
-  border: 1px solid black;
-  margin: auto;
+.flex-container-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.flex-container-column {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.flex-item {
+  padding: 5px;
+  text-align: center;
+}
+
+.front {
+  z-index: 1000;
 }
