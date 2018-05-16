@@ -122,16 +122,19 @@ namespace ShapeGame.Speech
         {
             this.CheckDisposed();
 
-            if (kinectSource != null)
-            {
-                this.kinectAudioSource = kinectSource;
-                this.kinectAudioSource.AutomaticGainControlEnabled = false;
-                this.kinectAudioSource.BeamAngleMode = BeamAngleMode.Adaptive;
-                var kinectStream = this.kinectAudioSource.Start();
-                this.sre.SetInputToAudioStream(
-                    kinectStream, new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
-                this.sre.RecognizeAsync(RecognizeMode.Multiple);
-            }
+            this.sre.SetInputToDefaultAudioDevice();
+            this.sre.RecognizeAsync(RecognizeMode.Multiple);
+//            if (kinectSource != null)
+//            {
+//                this.kinectAudioSource = kinectSource;
+//                this.kinectAudioSource.AutomaticGainControlEnabled = false;
+//                this.kinectAudioSource.BeamAngleMode = BeamAngleMode.Adaptive;
+////                var kinectStream = this.kinectAudioSource.Start();
+////                this.sre.SetInputToAudioStream(
+////                    kinectStream, new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
+//                
+//                this.sre.RecognizeAsync(RecognizeMode.Multiple);
+//            }
         }
 
         public void Stop()

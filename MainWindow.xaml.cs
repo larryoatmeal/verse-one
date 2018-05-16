@@ -60,6 +60,11 @@ namespace ShapeGame
         private const string CmdSetloopstart = "setLoopStart";
         private const string CmdForward = "forward";
         private const string CmdReverse = "reverse";
+        private const string CmdPatchOne = "patchOne";
+        private const string CmdPatchTwo = "patchTwo";
+        private const string CmdPatchThree = "patchThree";
+        private const string CmdLock = "lock";
+        private const string CmdControl = "control";
 
         private readonly Dictionary<int, Player> players = new Dictionary<int, Player>();
         private readonly SoundPlayer popSound = new SoundPlayer();
@@ -93,9 +98,27 @@ namespace ShapeGame
         static MoveBackGesture moveBackGesture = new MoveBackGesture();
         static MoveForwardGesture moveForwardGesture = new MoveForwardGesture();
 
-
         public static TimedQueue<Dictionary<string, string>> QUEUE;
         public static TimedQueue<JointCollection> jointQueue;
+
+        public static Dictionary<Gesture, string> gestureMap = new Dictionary<Gesture, string>()
+        {
+            {crossGesture, CmdTogglePlay},
+            {raiseLeftHandGesture, CmdSetloopstart },
+            {raiseRightHandGesture, CmdSetloopend },
+            {waveGesture, CmdToggleloop },
+            {moveForwardGesture, CmdForward },
+            {moveBackGesture, CmdReverse }
+        };
+
+        public static Dictionary<SpeechRecognizer.Verbs, string> speechMap = new Dictionary<SpeechRecognizer.Verbs, string>()
+        {
+            {SpeechRecognizer.Verbs.PatchOne, CmdPatchOne},
+            {SpeechRecognizer.Verbs.PatchTwo, CmdPatchTwo },
+            {SpeechRecognizer.Verbs.PatchThree, CmdPatchThree },
+            {SpeechRecognizer.Verbs.Control, CmdControl },
+            {SpeechRecognizer.Verbs.Lock, CmdLock },
+        };
 
         private float jointWindowSize = 3;
         private static float messageWindowSize = 2;
@@ -258,13 +281,12 @@ namespace ShapeGame
             kinectSensorManager.SkeletonStreamEnabled = true;
             kinectSensorManager.KinectSensorEnabled = true;
 
-            crossGesture.GestureRecognized += CrossGestureRecognized;
-            raiseLeftHandGesture.GestureRecognized += RaiseLeftHandGestureRecognized;
-            raiseRightHandGesture.GestureRecognized += RaiseRightHandGestureRecognized;
-            waveGesture.GestureRecognized += WaveGestureRecognized;
-            moveBackGesture.GestureRecognized += MoveBackGestureRecognized;
-            moveForwardGesture.GestureRecognized += MoveForwardGestureRecognized;
-
+            foreach (var keyValuePair in gestureMap)
+            {
+                var gesture = keyValuePair.Key;
+                var cmd = keyValuePair.Value;
+                gesture.AddListener((s, e) => SendCommand(cmd));
+            }
 
             if (!kinectSensorManager.KinectSensorAppConflict)
             {
@@ -394,9 +416,10 @@ namespace ShapeGame
             }
         }
 
-        static void SendCommand(string command, string description = "Description Here")
+        void SendCommand(string command)
         {
-            Console.WriteLine(description);
+            FlyText(command);
+            Console.WriteLine(command);
             bellSound.Play();
 
             Dictionary<string, string> cmd = new Dictionary<string, string>
@@ -406,35 +429,6 @@ namespace ShapeGame
             MainWindow.QUEUE.Push(cmd);
 
  
-        }
-        static void CrossGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdTogglePlay, "CROSS GESTURE RECOGNIZED");
-        }
-
-        static void RaiseRightHandGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdSetloopend, "RIGHT HAND RAISED RECOGNIZED");
-        }
-
-        static void WaveGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdToggleloop, "WAVE GESTURE RECOGNIZED");
-        }
-
-        static void RaiseLeftHandGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdSetloopstart, "LEFT HAND RAISED RECOGNIZED");
-        }
-
-        static void MoveBackGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdForward, "SEEK BACKWARDS GESTURE RECOGNIZED");
-        }
-
-        static void MoveForwardGestureRecognized(object sender, EventArgs e)
-        {
-            SendCommand(CmdReverse, "SEEK FORWARD GESTURE RECOGNIZED");
         }
 
         static void ResetAllGestures()
@@ -582,10 +576,23 @@ namespace ShapeGame
         }
         #endregion GameTimer/Thread
 
+
+        private void FlyText(string str)
+        {
+            FlyingText.NewFlyingText(this.screenRect.Width / 30, new Point(this.screenRect.Width / 2, this.screenRect.Height / 2), str);
+
+        }
+
+
+
         #region Kinect Speech processing
         private void RecognizerSaidSomething(object sender, SpeechRecognizer.SaidSomethingEventArgs e)
         {
-            FlyingText.NewFlyingText(this.screenRect.Width / 30, new Point(this.screenRect.Width / 2, this.screenRect.Height / 2), e.Matched);
+            if (speechMap.ContainsKey(e.Verb))
+            {
+                SendCommand(speechMap[e.Verb]);
+            }
+
 //            switch (e.Verb)
 //            {
 //                case SpeechRecognizer.Verbs.Pause:

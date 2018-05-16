@@ -1,10 +1,9 @@
-﻿
+﻿using System;
 using Microsoft.Kinect;
-using System;
 
-namespace ShapeGame
+namespace ShapeGame.Gestures
 {
-    public class MoveBackGesture
+    public class MoveBackGesture: Gesture
     {
         
         readonly int WINDOW_SIZE = 50;
@@ -96,6 +95,11 @@ namespace ShapeGame
             _currentSegment = 0;
             _frameCount = 0;
             lastGestureTime = 0.0f;
+        }
+
+        public override void AddListener(EventHandler e)
+        {
+            GestureRecognized += e;
         }
     }
 
