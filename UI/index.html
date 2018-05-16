@@ -30,7 +30,7 @@
 
     <label style="display: none">
       Host IP
-      <input type="text" id="hostIp" value="http://localhost:8080/test/"/>
+      <input type="text" id="hostIp" value="http://192.168.0.101:8080/test"/>
     </label>
 
     <div class="songSelectContainer">
@@ -66,7 +66,9 @@
 
     <h1 id="loadingBeatDetect">PERFORMING BEAT DETECTION, PLEASE WAIT...</h1>
     <h1 id="loadingRegular">LOADING SONG </h1>
-    <h1 class="calibration" id="calibrationText">In Calibration Mode</h1>
+    <h1 id="instrumentText">Current instrument: <span id="instrumentName">Piano</span></h1>
+    <div id="instrumentImage" class="pianoImage"></div>
+    <h1 id="calibrationText">In Calibration Mode</h1>
     <p id="coordinates"></p>
 
     <canvas id="canvas" width='508' height='508'></canvas>

@@ -4,5 +4,11 @@ loopOn
 loopOff
 setLoopStart
 setLoopEnd
+forward
+reverse
 calibrateModeOff
 calibrateModeOn
+xy
+patchOne
+patchTwo
+patchThree

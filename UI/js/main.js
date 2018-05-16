@@ -1,6 +1,11 @@
 /**
 * Created by larryw on 4/7/18.
 */
+let Instrument = {
+  PIANO: "Piano",
+  ELECTRIC_PIANO: "Electric Piano",
+  ORGAN: "Organ",
+};
 
 window.addEventListener('load', function() {
   //console.log('All assets are loaded')
@@ -15,6 +20,8 @@ window.addEventListener('load', function() {
   let container = document.getElementById('container');
   let canvas = document.getElementById('canvas');
   let coordinates = document.getElementById('coordinates');
+
+
 
   drawGrid();
 
@@ -457,7 +464,6 @@ window.addEventListener('load', function() {
         }
         else if(command === 'loopOn'){
           loopOn();
-
         }
         else if(command === 'togglePlay'){
           togglePlay();
@@ -491,6 +497,15 @@ window.addEventListener('load', function() {
           let x = params[1];
           let y = params[2];
           updateCoordinates(x, y);
+        }
+        else if (command == "patchOne"){
+          updateInstrument(Instrument.PIANO);
+        }
+        else if (command == "patchTwo"){
+          updateInstrument(Instrument.ELECTRIC_PIANO);
+        }
+        else if (command == "patchThree"){
+          updateInstrument(Instrument.ORGAN);
         }
         processedMessages.add(id);
       }
@@ -578,6 +593,24 @@ window.addEventListener('load', function() {
     ctx.closePath();
     var coords = "X coordinates: " + x + ", Y coordinates: " + y;
     coordinates.innerHTML = coords;
+  }
+
+
+  let instrumentName = document.getElementById('instrumentName');
+
+  function updateInstrument(newInstrument){
+    instrumentName.innerHTML = newInstrument;
+    let instrumentImage = document.getElementById('instrumentImage');
+    instrumentImage.className = "";
+    if (newInstrument == Instrument.PIANO){
+      instrumentImage.classList.add("pianoImage");
+    }
+    else if (newInstrument == Instrument.ELECTRIC_PIANO){
+      instrumentImage.classList.add("ePianoImage");
+    }
+    else if (newInstrument == Instrument.ORGAN){
+      instrumentImage.classList.add("organImage");
+    }
   }
 
 });
