@@ -702,7 +702,11 @@ namespace ShapeGame
         {
 
 //            DATA1.Content = $"Left Hand X: {skeleton.Joints[JointType.HandLeft].Position.X}";
-            DATA2.Content = $"Left Hand Y: {skeleton.Joints[JointType.HandLeft].Position.Y}";
+            var handLeftY = skeleton.Joints[JointType.HandLeft].Position.Y;
+            var handLeftX = skeleton.Joints[JointType.HandLeft].Position.X;
+           
+            
+            DATA2.Content = $"Left Hand Y: {handLeftY}";
             var positionZ = skeleton.Joints[JointType.ShoulderCenter].Position.Z;
             DATA1.Content = $"CENTER Z: {positionZ}";
 
@@ -735,6 +739,10 @@ namespace ShapeGame
 
             DATA3.Content = $"X: {xy.Item1}";
             DATA4.Content = $"Y: {xy.Item2}";
+            
+            
+//            if(calib)
+            
         }
 
         private Tuple<int, int> GetXYPadData(Skeleton skeleton)

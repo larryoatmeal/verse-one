@@ -255,6 +255,12 @@ window.addEventListener('load', function() {
 
   setupMidi();
 
+  function init(){
+    setCalibrationModeOff();
+  }
+  init();
+
+
   let pedalControlMode = true; //false is traditional pedal
   let pedalHitCount = 0;
   let pedalBounceTime = 500;
@@ -333,16 +339,14 @@ window.addEventListener('load', function() {
   });
 
   function setCalibrationModeOn(){
-    calibrationText.classList.add("hidden");
-  }
-
-  function setCalibrationModeOff(){
     calibrationText.classList.remove("hidden");
   }
 
+  function setCalibrationModeOff(){
+    calibrationText.classList.add("hidden");
+  }
+
   function togglePlay(){
-
-
     if(wavesurfer.isPlaying()){
       pause();
 
@@ -642,15 +646,15 @@ window.addEventListener('load', function() {
         }
         else if(command === 'calibrateKeyboardHeight'){
           setCalibrationModeOn();
-          calibrationText = "Please place your hands on the keyboard. Say CONTINUE to continue"
+          calibrationText.innerHTML = "Please place your hands on the keyboard. Say CONTINUE to continue"
         }
         else if(command === 'calibrateHandRaiseHeight'){
           setCalibrationModeOn();
-          calibrationText = "Raise both hands as high as possible. Say CONTINUE to continue"
+          calibrationText.innerHTML = "Raise both hands as high as possible. Say CONTINUE to continue"
         }
         else if(command === 'calibrateXY'){
           setCalibrationModeOn();
-          calibrationText = "Move your left hand in the xy region you would like to control. Say CONTINUE to finish"
+          calibrationText.innerHTML = "Move your left hand in the xy region you would like to control. Say CONTINUE to finish"
         }
         else if(command === 'calibrateDone'){
           setCalibrationModeOff();
