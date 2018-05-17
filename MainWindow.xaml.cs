@@ -114,17 +114,37 @@ namespace ShapeGame
         static WaveGesture waveGesture = new WaveGesture();
         static MoveBackGesture moveBackGesture = new MoveBackGesture();
         static MoveForwardGesture moveForwardGesture = new MoveForwardGesture();
-        static SwipeLeftGesture _swipeLeftGesture = new SwipeLeftGesture();
-        static SwipeBothGesture swipeBothGesture = new SwipeBothGesture();
+        static SwipeRightHand rightSwipeRight = new SwipeRightHand();
+        static SwipeRightHand rightSwipeLeft = new SwipeRightHand(right:false);
+        static SwipeLeftHand leftSwipeLeft = new SwipeLeftHand();
+        static SwipeLeftHand leftSwipeRight = new SwipeLeftHand(left:false);
+
+        //        static SwipeRightHand rightSwipeRight = new SwipeRightHand();
+
+        //        static SwipeBothGesture swipeBothGesture = new SwipeBothGesture();
 
         public static TimedQueue<Dictionary<string, string>> QUEUE;
         public static TimedQueue<JointCollection> jointQueue;
 
+        public enum Swipe
+        {
+            rr,
+            lr,
+            ll,
+            rl
+        }
+
+        public static Throttle<Swipe> swipeThrottle;
+
         public static Dictionary<Gesture, string> gestureMap = new Dictionary<Gesture, string>()
         {
-            {crossGesture, CmdTogglePlay},
-            {_swipeLeftGesture, CmdSwipeRight},
-            {swipeBothGesture, CmdSwipeBoth},
+//            {crossGesture, CmdTogglePlay},
+//            {rightSwipeRight, "RIGHT-RIGHT"},
+//            {leftSwipeLeft, "LEFT-LEFT" },
+//            {rightSwipeLeft, "RIGHT-LEFT" },
+//            {leftSwipeRight, "LEFT-RIGHT" }
+
+//            {swipeBothGesture, CmdSwipeBoth},
 //            {raiseLeftHandGesture, CmdSetloopstart },
 //            {raiseRightHandGesture, CmdSetloopend },
 //            {waveGesture, CmdToggleloop },
@@ -156,15 +176,17 @@ namespace ShapeGame
         private static int ID = 0;
         private float threshold = 0.9f;
 
-        static CalibrationSteps CalibrationStep = CalibrationSteps.NOT_STARTED;
+        public static float Y_THRESHOLD = 0.5f;
+
+        public static CalibrationSteps CalibrationStep = CalibrationSteps.NOT_STARTED;
         //XY pad
         private float padMinX = -0.4f;
         private float padMinY = 0.5f;
         private float padMaxX = 0.1f;
         private float padMaxY = 1f;
 
-        private float defaultHandHeight = 0;
-        private float maxHeight = 0;
+        private static float defaultHandHeight = 0.1f;
+        private static float maxHeight = 1.1f;
 
         //okay Z
         private float minZ = 2;
@@ -173,9 +195,21 @@ namespace ShapeGame
         private bool isValidState = true;
 
         MIDIMaster midiMaster;
+        private float swipeThrottleTime = 0.3f;
+
         #endregion Private State
 
         #region ctor + Window Events
+
+        public static bool LeftHandHighEnough(Skeleton skeleton)
+        {
+            return skeleton.Joints[JointType.HandLeft].Position.Y > (defaultHandHeight + Y_THRESHOLD * (maxHeight - defaultHandHeight));
+        }
+
+        public static bool RightHandHighEnough(Skeleton skeleton)
+        {
+            return skeleton.Joints[JointType.HandRight].Position.Y > (defaultHandHeight + Y_THRESHOLD * (maxHeight - defaultHandHeight));
+        }
 
         public MainWindow()
         {
@@ -199,7 +233,46 @@ namespace ShapeGame
 
             //this.RestoreWindowState();
             jointQueue = new TimedQueue<JointCollection>(jointWindowSize);
+            swipeThrottle = new Throttle<Swipe>(swipeThrottleTime, list =>
+            {
+                
+                if (list.Count >= 2)
+                {
+                    if ((list[0].Data == Swipe.rr && list[1].Data == Swipe.ll) || 
+                        (list[0].Data == Swipe.ll && list[1].Data == Swipe.rr))
+                    {
+                        SendCommand(CmdTogglePlay);
+                        return list.Count;
+                    }
+                    if ((list[0].Data == Swipe.rl && list[1].Data == Swipe.ll) ||
+                        (list[0].Data == Swipe.ll && list[1].Data == Swipe.rl))
+                    {
+                        SendCommand("Previous Song");
+                        return list.Count;
+                    }
+                    if ((list[0].Data == Swipe.rr && list[1].Data == Swipe.lr) ||
+                        (list[0].Data == Swipe.lr && list[1].Data == Swipe.rr))
+                    {
+                        SendCommand("Next Song");
+                        return list.Count;
+                    }
+                }
+                
+                if (list[0].Data == Swipe.rr)
+                {
+                    SendCommand(CmdForward);
+                }
+                if (list[0].Data == Swipe.rl)
+                {
+                    SendCommand(CmdReverse);
+                }
 
+
+      
+                return list.Count;
+                
+
+            });
             stopWatch.Start();
 
 
@@ -208,39 +281,46 @@ namespace ShapeGame
 
         private void init()
         {
-            ENTRY1_LABEL.Content = "MINX";
+            ENTRY1_LABEL.Content = "HEIGHT_RATIO";
             ENTRY2_LABEL.Content = "MAXX";
             ENTRY3_LABEL.Content = "MINY";
             ENTRY4_LABEL.Content = "MAXY";
-
-            ENTRY1.Text = padMinX.ToString();
-            ENTRY2.Text = padMaxX.ToString();
-            ENTRY3.Text = padMinY.ToString();
-            ENTRY4.Text = padMaxY.ToString();
+            ENTRY1.Text = Y_THRESHOLD.ToString();
+//            ENTRY1.Text = padMinX.ToString();
+//            ENTRY2.Text = padMaxX.ToString();
+//            ENTRY3.Text = padMinY.ToString();
+//            ENTRY4.Text = padMaxY.ToString();
 
         }
         
         private void StartCalibration()
         {
-            CalibrationStep = CalibrationSteps.KEYBOARD_HEIGHT;
-            SendCommand(CmdCalibrateKeyboardHeight);
+            if (CalibrationStep == CalibrationSteps.NOT_STARTED)
+            {
+                padMinX = 1000;
+                padMaxX = -1000;
+                padMinY = 1000;
+                padMaxY = -1000;
+                CalibrationStep = CalibrationSteps.KEYBOARD_HEIGHT;
+                SendCommand(CmdCalibrateKeyboardHeight, true, false);
+            }
         }
 
         private void AdvanceCalibration()
         {
             if (CalibrationStep == CalibrationSteps.KEYBOARD_HEIGHT)
             {
-                SendCommand(CmdCalibrateHandRaiseHeight);
+                SendCommand(CmdCalibrateHandRaiseHeight, true, false);
                 CalibrationStep = CalibrationSteps.RAISE_HAND_HEIGHT;
             }
             else if (CalibrationStep == CalibrationSteps.RAISE_HAND_HEIGHT)
             {
-                SendCommand(CmdCalibrateXY);
+                SendCommand(CmdCalibrateXY, true, false);
                 CalibrationStep = CalibrationSteps.XY;
             }
             else if (CalibrationStep == CalibrationSteps.XY)
             {
-                SendCommand(CmdCalibrateDone);
+                SendCommand(CmdCalibrateDone, true, false);
                 CalibrationStep = CalibrationSteps.NOT_STARTED;
             }
         }
@@ -367,6 +447,11 @@ namespace ShapeGame
                 gesture.AddListener((s, e) => SendCommand(cmd));
             }
 
+            leftSwipeRight.AddListener((s, e) => swipeThrottle.Push(Swipe.lr));
+            rightSwipeLeft.AddListener((s, e) => swipeThrottle.Push(Swipe.rl));
+            rightSwipeRight.AddListener((s, e) => swipeThrottle.Push(Swipe.rr));
+            leftSwipeLeft.AddListener((s, e) => swipeThrottle.Push(Swipe.ll));
+
             if (!kinectSensorManager.KinectSensorAppConflict)
             {
                 // Start speech recognizer after KinectSensor started successfully.
@@ -451,8 +536,10 @@ namespace ShapeGame
                                 waveGesture.Update(skeleton);
                                 moveBackGesture.Update(skeleton);
                                 moveForwardGesture.Update(skeleton);
-                                _swipeLeftGesture.Update(skeleton);
-                                swipeBothGesture.Update(skeleton);
+                                rightSwipeRight.Update(skeleton);
+                                leftSwipeLeft.Update(skeleton);
+                                rightSwipeLeft.Update(skeleton);
+                                leftSwipeRight.Update(skeleton);
 
                                 //player.DetectGesture(skeleton.Joints);
                                 // Head, hands, feet (hit testing happens in order here)
@@ -505,17 +592,9 @@ namespace ShapeGame
         }
 
 
-        void SendCommand(string command, bool debug = true)
+        void SendCommand(string command, bool debug = true, bool ignoreIfSkeletonBad = true)
         {
-            if (!isPlayerSkeletonOkay())//don't do anything if bad skeleton
-            {
-                return;
-            }
-            if (CalibrationStep != CalibrationSteps.NOT_STARTED)
-            {
-                //we are calibrating
-                return;
-            }
+            
 
             if (debug)
             {
@@ -523,6 +602,16 @@ namespace ShapeGame
                 Console.WriteLine(command);
                 bellSound.Play();
             }
+
+            if (ignoreIfSkeletonBad && !isPlayerSkeletonOkay())//don't do anything if bad skeleton
+            {
+                return;
+            }
+//            if (CalibrationStep != CalibrationSteps.NOT_STARTED)
+//            {
+//                //we are calibrating
+//                return;
+//            }
 
             Dictionary<string, string> cmd = new Dictionary<string, string>
             {
@@ -543,14 +632,20 @@ namespace ShapeGame
 
         static void ResetAllGestures()
         {
+
+
+
             raiseLeftHandGesture.Reset();
             raiseRightHandGesture.Reset();
             crossGesture.Reset();
             waveGesture.Reset();
             moveBackGesture.Reset();
             moveForwardGesture.Reset();
-            _swipeLeftGesture.Reset();
-            swipeBothGesture.Reset();
+            rightSwipeRight.Reset();
+            rightSwipeLeft.Reset();
+            leftSwipeRight.Reset();
+            leftSwipeLeft.Reset();
+
         }
 
 
@@ -700,14 +795,19 @@ namespace ShapeGame
         private void ProcessSkeleton(Skeleton skeleton)
         {
 
-//            DATA1.Content = $"Left Hand X: {skeleton.Joints[JointType.HandLeft].Position.X}";
+////            DATA1.Content = $"Left Hand X: {skeleton.Joints[JointType.HandLeft].Position.X}";
             var handLeftY = skeleton.Joints[JointType.HandLeft].Position.Y;
             var handLeftX = skeleton.Joints[JointType.HandLeft].Position.X;
-           
-            
-            DATA2.Content = $"Left Hand Y: {handLeftY}";
+//           
+//            
+//            DATA2.Content = $"Left Hand Y: {handLeftY}";
             var positionZ = skeleton.Joints[JointType.ShoulderCenter].Position.Z;
-            DATA1.Content = $"CENTER Z: {positionZ}";
+//            DATA1.Content = $"CENTER Z: {positionZ}";
+
+            DATA1.Content = $"Default height {defaultHandHeight}";
+            DATA2.Content = $"Max Height {maxHeight}";
+            DATA3.Content = $"X {padMinX} - {padMaxX}";
+            DATA4.Content = $"Y {padMinY} - {padMaxY}";
 
             //constraints
             bool isTooFar = positionZ > maxZ;
@@ -736,25 +836,40 @@ namespace ShapeGame
             SendXY(xy.Item1, xy.Item2);
             midiMaster.SendXY((byte) xy.Item1, (byte) xy.Item2);
 
-            DATA3.Content = $"X: {xy.Item1}";
-            DATA4.Content = $"Y: {xy.Item2}";
+//            DATA3.Content = $"X: {xy.Item1}";
+//            DATA4.Content = $"Y: {xy.Item2}";
             
             
 //            if(calib)
-            
+            if (CalibrationStep == CalibrationSteps.KEYBOARD_HEIGHT)
+            {
+                defaultHandHeight = handLeftY;
+            }
+            else if (CalibrationStep == CalibrationSteps.RAISE_HAND_HEIGHT)
+            {
+                maxHeight = handLeftY;
+            }
+            else if (CalibrationStep == CalibrationSteps.XY)
+            {
+                padMinX = Math.Min(handLeftX, padMinX);
+                padMinY = Math.Min(handLeftY, padMinY);
+                padMaxX = Math.Max(handLeftX, padMaxX);
+                padMaxY = Math.Max(handLeftY, padMaxY);
+            }
+            swipeThrottle.UpdateThrottle();
         }
 
         private Tuple<int, int> GetXYPadData(Skeleton skeleton)
         {
             
 
-            float minX = strToFloat(ENTRY1.Text);
-            float maxX = strToFloat(ENTRY2.Text);
-            float minY = strToFloat(ENTRY3.Text);
-            float maxY = strToFloat(ENTRY4.Text);
+//            float minX = strToFloat(ENTRY1.Text);
+//            float maxX = strToFloat(ENTRY2.Text);
+//            float minY = strToFloat(ENTRY3.Text);
+//            float maxY = strToFloat(ENTRY4.Text);
 
-            float x = scale(minX, maxX, skeleton.Joints[JointType.HandLeft].Position.X);
-            float y = scale(minY, maxY, skeleton.Joints[JointType.HandLeft].Position.Y);
+            float x = scale(padMinX, padMaxX, skeleton.Joints[JointType.HandLeft].Position.X);
+            float y = scale(padMinY, padMaxY, skeleton.Joints[JointType.HandLeft].Position.Y);
             int xMidi = (int) (127 * x);
             int yMidi = (int) (127 * y);
             return Tuple.Create(xMidi, yMidi);
@@ -762,6 +877,10 @@ namespace ShapeGame
 
         private float scale(float min, float max, float x)
         {
+            if (Math.Abs(max - min) < 0.0001)
+            {
+                return 0.5f;
+            }
             if (x < min)
             {
                 return 0;
@@ -837,6 +956,10 @@ namespace ShapeGame
 
         #endregion Kinect Speech processing
 
-        
+
+        private void ENTRY1_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            Y_THRESHOLD = strToFloat(ENTRY1.Text);
+        }
     }
 }

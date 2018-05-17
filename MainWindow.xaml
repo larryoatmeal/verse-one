@@ -31,7 +31,7 @@
                 <TextBox Name="ENTRY4" Margin="84,630,465.2,17"></TextBox>
                 <TextBox Name="ENTRY3" Margin="84,561,465.2,86"/>
                 <TextBox Name="ENTRY2" Margin="84,494,465.2,153"/>
-                <TextBox Name="ENTRY1" Margin="84,426,465.2,221"/>
+                <TextBox Name="ENTRY1" Margin="84,426,465.2,221" TextChanged="ENTRY1_OnTextChanged"/>
                 <Label Foreground ="White" FontSize="15" Width="57" Height="41" Margin="22,426,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA4" x:Name="ENTRY1_LABEL"/>
                 <Label Foreground ="White" FontSize="15" Width="57" Height="41" Margin="22,494,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA4" x:Name="ENTRY2_LABEL"/>
                 <Label Foreground ="White" FontSize="15" Width="57" Height="41" Margin="22,561,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="DATA4" x:Name="ENTRY3_LABEL"/>
