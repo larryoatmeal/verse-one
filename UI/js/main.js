@@ -336,11 +336,11 @@ wavesurfer.on('finish', function () {
 });
 
 function setCalibrationModeOn(){
-  calibrationText.classList.add("hidden");
+  calibrationText.classList.remove("hidden");
 }
 
 function setCalibrationModeOff(){
-  calibrationText.classList.remove("hidden");
+  calibrationText.classList.add("hidden");
 }
 
 function togglePlay(){
@@ -645,15 +645,15 @@ function processJson(data){
       }
       else if(command === 'calibrateKeyboardHeight'){
         setCalibrationModeOn();
-        calibrationText = "Please place your hands on the keyboard. Say CONTINUE to continue"
+        calibrationText.innerHTML = "Please place your hands on the keyboard. Say CONTINUE to continue"
       }
       else if(command === 'calibrateHandRaiseHeight'){
         setCalibrationModeOn();
-        calibrationText = "Raise both hands as high as possible. Say CONTINUE to continue"
+        calibrationText.innerHTML = "Raise both hands as high as possible. Say CONTINUE to continue"
       }
       else if(command === 'calibrateXY'){
         setCalibrationModeOn();
-        calibrationText = "Move your left hand in the xy region you would like to control. Say CONTINUE to finish"
+        calibrationText.innerHTML = "Move your left hand in the xy region you would like to control. Say CONTINUE to finish"
       }
       else if(command === 'calibrateDone'){
         setCalibrationModeOff();
