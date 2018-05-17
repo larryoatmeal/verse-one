@@ -256,13 +256,6 @@ window.addEventListener('load', function () {
     }
 
     init();
-
-
-    let pedalControlMode = true; //false is traditional pedal
-    let pedalHitCount = 0;
-    let pedalBounceTime = 500;
-    let pedalTimeOut = null;
-
     setupMidi();
 
     let pedalControlMode = true; //false is traditional pedal
