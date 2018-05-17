@@ -11,6 +11,7 @@ let SkeletonPositions = {
   TOO_FAR: "You're too far! Please move closer to the Kinect.",
   TOO_NEAR: "You're too near! Please move further from the Kinect",
   OKAY: "Skeleton detected.",
+  GONE: "Skeleton not detected."
 };
 
 window.addEventListener('load', function() {
@@ -160,13 +161,20 @@ window.addEventListener('load', function() {
   let isLooping = false;
   let skeletonDetected = false;
 
-  let loopMs = 500;
+  let loopMs = 50;
 
   let loopStart = 0;
   let loopEnd = 1000;
   let beatAlign = true;
   //API
   //loadAudio('snow');
+  let xySmoothSize = 20;
+  let xSmoother = new Smoother(xySmoothSize);
+  let ySmoother = new Smoother(xySmoothSize);
+
+  //MIDI related
+  let midiOut = null;
+  let controlLock = true;
 
   document.getElementById("playStopButton").addEventListener("click", togglePlay)
   var cycleButton = document.getElementById("cycleOnOffButton");
@@ -182,6 +190,73 @@ window.addEventListener('load', function() {
   let playIcon = document.getElementById('playIcon');
   let pauseIcon = document.getElementById('pauseIcon');
 
+
+  function setupMidi(){
+    WebMidi.enable(function () {
+
+      // Viewing available inputs and outputs
+      console.log(WebMidi.inputs);
+      console.log(WebMidi.outputs);
+
+      // Retrieve an input by name, id or index
+      let input = WebMidi.getInputByName("MK-449C USB MIDI Keyboard");
+      let output = WebMidi.getOutputByName("IAC Driver Bus 1");
+      midiOut = output;
+      // OR...
+      // input = WebMidi.getInputById("1809568182");
+      // input = WebMidi.inputs[0];
+
+      // Listen for a 'note on' message on all channels
+      //input.addListener('noteon', 'all',
+      //    function (e) {
+      //      console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
+      //    }
+      //);
+
+      // Listen to pitch bend message on channel 3
+      //input.addListener('pitchbend', 3,
+      //    function (e) {
+      //      console.log("Received 'pitchbend' message.", e);
+      //    }
+      //);
+
+      // Listen to control change message on all channels
+      input.addListener('controlchange', "all",
+          function (e) {
+            //console.log("Received 'controlchange' message.", e);
+            console.log(e.controller);
+            if(e.controller.number == 64){
+              pedalPressed();
+            }
+          }
+      );
+
+      //// Remove all listeners for 'noteoff' on all channels
+      //input.removeListener('noteoff');
+      //
+      //// Remove all listeners on the input
+      //input.removeListener();
+
+    });
+  }
+
+  setupMidi();
+
+  function pedalPressed(){
+    controlLock = !controlLock;
+  }
+
+  function sendCCChange(cc, val){
+    if(midiOut){
+      midiOut.sendControlChange(cc, val);
+    }
+  }
+
+  function sendProgramChange(program){
+    if(midiOut){
+      midiOut.sendProgramChange(program);
+    }
+  }
 
   wavesurfer.on('finish', function () {
     console.log("FINISHED PLAYING");
@@ -320,10 +395,10 @@ window.addEventListener('load', function() {
 
   function placeMarkers(wave){
 
-    console.log(beatData);
+    //console.log(beatData);
 
     var totalWidth = wave.scrollWidth;
-    console.log(totalWidth);
+    //console.log(totalWidth);
 
     deleteMe.forEach(div => {
       div.remove();
@@ -339,7 +414,7 @@ window.addEventListener('load', function() {
       //div.innerHTML = "Hello";
       div.style.position = "absolute";
       div.style.left = totalWidth * beat/wavesurfer.getDuration() + "px";
-      console.log(div.style.left);
+      //console.log(div.style.left);
 
       //wave.appendChild(div);
       //deleteMe.push(div);
@@ -366,7 +441,7 @@ window.addEventListener('load', function() {
       divB.textContent = "B";
       divB.style.position = 'absolute';
       wave.appendChild(divB);
-      console.log(loopEnd);
+      //console.log(loopEnd);
       setTimePosition(divB, loopEnd);
     }
 
@@ -398,7 +473,7 @@ window.addEventListener('load', function() {
     placeMarkers(wave);
 
     let duration = wavesurfer.getDuration();
-    console.log(duration);
+    //console.log(duration);
 
     //console.log(waveForm.getElementsByTagName("wave"));
 
@@ -503,35 +578,60 @@ window.addEventListener('load', function() {
         else if(command === 'calibrateModeOff'){
           setCalibrationModeOff();
         }
-        else if(command.includes("XY")){
-          let params = command.split(",");
-          let x = parseInt(params[1]);
-          let y = parseInt(params[2]);
-          updateCoordinates(x, y);
-        }
+
         else if (command == "patchOne"){
+          sendProgramChange(0);
           updateInstrument(Instrument.PIANO);
         }
         else if (command == "patchTwo"){
+          sendProgramChange(1);
           updateInstrument(Instrument.ELECTRIC_PIANO);
         }
         else if (command == "patchThree"){
+          sendProgramChange(2);
           updateInstrument(Instrument.ORGAN);
         }
-        else if (command == "isTooFar"){
-          skeletonDetected = false;
-          updateSkeletonText(SkeletonPositions.TOO_FAR);
-        }
-        else if (command == "isTooNear"){
-          skeletonDetected = false;
-          updateSkeletonText(SkeletonPositions.TOO_NEAR);
-        } else if (command == "skeletonOkay"){
-          skeletonDetected = true;
-          updateSkeletonText(SkeletonPositions.OKAY);
-        }
+
         processedMessages.add(id);
       }
     });
+
+
+    let status = data.status;
+    let skeletonStatus = status.skeletonStatus;
+    if (skeletonStatus == "isTooFar"){
+      skeletonDetected = false;
+      updateSkeletonText(SkeletonPositions.TOO_FAR);
+    }
+    else if (skeletonStatus == "isTooNear"){
+      skeletonDetected = false;
+      updateSkeletonText(SkeletonPositions.TOO_NEAR);
+    } else if (skeletonStatus == "skeletonOkay"){
+      skeletonDetected = true;
+      updateSkeletonText(SkeletonPositions.OKAY);
+    }else{
+      skeletonDetected = false;
+      updateSkeletonText(SkeletonPositions.GONE);
+    }
+
+    let xyStatus = status.XY;
+    if(xyStatus){
+      let params = xyStatus.split(",");
+      let x = parseInt(params[0]);
+      let y = parseInt(params[1]);
+
+      xSmoother.feed(x);
+      ySmoother.feed(y);
+
+      let xFinal = Math.floor(xSmoother.lowpassValue);
+      let yFinal = Math.floor(ySmoother.lowpassValue);
+
+      updateCoordinates(xFinal, yFinal);
+
+      sendCCChange(1, xFinal);
+      sendCCChange(7, yFinal);
+    }
+
   }
 
 
@@ -609,7 +709,7 @@ window.addEventListener('load', function() {
 
     drawGrid();
     ctx.beginPath();
-    ctx.arc(x * 4,y * 4,10,0,2*Math.PI);
+    ctx.arc(x * 4,(127 - y) * 4,10,0,2*Math.PI);
     ctx.fillStyle = 'green';
     ctx.fill();
     ctx.closePath();
