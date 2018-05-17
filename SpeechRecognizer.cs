@@ -38,6 +38,9 @@ namespace ShapeGame.Speech
                 { "Patch One", new WhatSaid { Verb = Verbs.PatchOne } },
                 { "Patch Two", new WhatSaid { Verb = Verbs.PatchTwo } },
                 { "Patch Three", new WhatSaid { Verb = Verbs.PatchThree } },
+                { "Calibrate", new WhatSaid { Verb = Verbs.Calibrate } },
+                { "Done", new WhatSaid { Verb = Verbs.Done } },
+
             };
 
 
@@ -72,7 +75,9 @@ namespace ShapeGame.Speech
             Control,
             PatchOne,
             PatchTwo,
-            PatchThree
+            PatchThree,
+            Done,
+            Calibrate
         }
 
         public EchoCancellationMode EchoCancellationMode
@@ -253,7 +258,7 @@ namespace ShapeGame.Speech
 
         private void SreSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            //Console.Write("\rSpeech Recognized: \t{0}", e.Result.Text);
+            Console.Write("\rSpeech Recognized: \t{0}", e.Result.Text);
 
             if ((this.SaidSomething == null) || (e.Result.Confidence < 0.3))
             {
@@ -327,6 +332,26 @@ namespace ShapeGame.Speech
                         { "Command", "setLoopEnd" },
                     };
                 MainWindow.QUEUE.Push(cmd);
+            }
+
+            else if (said.Verb == Verbs.Calibrate)
+            {
+                Dictionary<string, string> cmd = new Dictionary<string, string>
+                {
+                    { "Command", "calibrate" },
+                };
+                MainWindow.QUEUE.Push(cmd);
+                MainWindow.CalibrationStep = 0;
+            }
+
+            else if (said.Verb == Verbs.Done)
+            {
+                Dictionary<string, string> cmd = new Dictionary<string, string>
+                {
+                    { "Command", "done" },
+                };
+                MainWindow.QUEUE.Push(cmd);
+                MainWindow.CalibrationStep += 1;
             }
 
             if (!found)

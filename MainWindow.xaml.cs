@@ -67,7 +67,10 @@ namespace ShapeGame
         private const string CmdPatchThree = "patchThree";
         private const string CmdLock = "lock";
         private const string CmdControl = "control";
-        private const string CmdXY = "XY";
+        private const string CmdSwipeLeft = "swipeLeft";
+        private const string CmdSwipeRight = "swipeRight";
+
+        private const string StatusXY = "XY";
         private const string StatusIsTooFar = "isTooFar";
         private const string StatusIsTooNear = "isTooNear";
         private const string StatusSkeletonOkay = "skeletonOkay";
@@ -105,6 +108,8 @@ namespace ShapeGame
         static WaveGesture waveGesture = new WaveGesture();
         static MoveBackGesture moveBackGesture = new MoveBackGesture();
         static MoveForwardGesture moveForwardGesture = new MoveForwardGesture();
+        static SwipeLeftGesture swipeLeftGesture = new SwipeLeftGesture();
+        static SwipeRightGesture swipeRightGesture = new SwipeRightGesture();
 
         public static TimedQueue<Dictionary<string, string>> QUEUE;
         public static TimedQueue<JointCollection> jointQueue;
@@ -112,11 +117,13 @@ namespace ShapeGame
         public static Dictionary<Gesture, string> gestureMap = new Dictionary<Gesture, string>()
         {
             {crossGesture, CmdTogglePlay},
-            {raiseLeftHandGesture, CmdSetloopstart },
-            {raiseRightHandGesture, CmdSetloopend },
-            {waveGesture, CmdToggleloop },
-            {moveForwardGesture, CmdForward },
-            {moveBackGesture, CmdReverse }
+            {swipeLeftGesture, CmdSwipeLeft},
+            {swipeRightGesture, CmdSwipeRight},
+//            {raiseLeftHandGesture, CmdSetloopstart },
+//            {raiseRightHandGesture, CmdSetloopend },
+//            {waveGesture, CmdToggleloop },
+//            {moveForwardGesture, CmdForward },
+//            {moveBackGesture, CmdReverse }
         };
 
         public static Dictionary<SpeechRecognizer.Verbs, string> speechMap = new Dictionary<SpeechRecognizer.Verbs, string>()
@@ -124,21 +131,26 @@ namespace ShapeGame
             {SpeechRecognizer.Verbs.PatchOne, CmdPatchOne},
             {SpeechRecognizer.Verbs.PatchTwo, CmdPatchTwo },
             {SpeechRecognizer.Verbs.PatchThree, CmdPatchThree },
-            {SpeechRecognizer.Verbs.Control, CmdControl },
-            {SpeechRecognizer.Verbs.Lock, CmdLock },
+//            {SpeechRecognizer.Verbs.Control, CmdControl },
+//            {SpeechRecognizer.Verbs.Lock, CmdLock },
         };
 
-        private float jointWindowSize = 3;
+        private float jointWindowSize = 0.5f;
         private static float messageWindowSize = 2;
         public static Stopwatch stopWatch = new Stopwatch();
         private static int ID = 0;
         private float threshold = 0.9f;
 
+
+        public static int CalibrationStep = -1;
         //XY pad
         private float padMinX = -0.4f;
         private float padMinY = 0.5f;
         private float padMaxX = 0.1f;
         private float padMaxY = 1f;
+
+        private float defaultHandHeight = 0;
+        private float maxHeight = 0;
 
         //okay Z
         private float minZ = 2;
@@ -171,12 +183,10 @@ namespace ShapeGame
             var kinectSensorBinding = new Binding("Kinect") { Source = this.sensorChooser };
             BindingOperations.SetBinding(this.KinectSensorManager, KinectSensorManager.KinectSensorProperty, kinectSensorBinding);
 
-            this.RestoreWindowState();
+            //this.RestoreWindowState();
             jointQueue = new TimedQueue<JointCollection>(jointWindowSize);
 
             stopWatch.Start();
-
-            CalibrationButton.Click += CalibrationButtonClicked;
 
 
             init();
@@ -196,12 +206,26 @@ namespace ShapeGame
 
         }
 
-
-        private void CalibrationButtonClicked(object sender, RoutedEventArgs e)
+        private void Calibration()
         {
-            CalibrationWindow c = new CalibrationWindow();
-            this.Content = c;
+            if (CalibrationStep == -1)
+            {
+
+            }
+            else if (CalibrationStep == 0)
+            {
+
+            }
+            else if (CalibrationStep == 1)
+            {
+
+            }
+            else if (CalibrationStep == 2)
+            {
+
+            }
         }
+
 
         public static string SendResponse(HttpListenerRequest request)
         {
@@ -409,6 +433,8 @@ namespace ShapeGame
                                 waveGesture.Update(skeleton);
                                 moveBackGesture.Update(skeleton);
                                 moveForwardGesture.Update(skeleton);
+                                swipeLeftGesture.Update(skeleton);
+                                swipeRightGesture.Update(skeleton);
 
                                 //player.DetectGesture(skeleton.Joints);
                                 // Head, hands, feet (hit testing happens in order here)
@@ -460,6 +486,7 @@ namespace ShapeGame
             }
         }
 
+
         void SendCommand(string command, bool debug = true)
         {
             if (!isPlayerSkeletonOkay())//don't do anything if bad skeleton
@@ -488,7 +515,7 @@ namespace ShapeGame
 
         void SendXY(int x, int y)
         {
-            SendCommand($"{CmdXY},{x},{y}", false);
+            SetStatus(StatusXY, $"{x},{y}");
         }
 
         static void ResetAllGestures()
@@ -499,6 +526,8 @@ namespace ShapeGame
             waveGesture.Reset();
             moveBackGesture.Reset();
             moveForwardGesture.Reset();
+            swipeLeftGesture.Reset();
+            swipeRightGesture.Reset();
         }
 
 

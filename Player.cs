@@ -40,7 +40,6 @@ namespace ShapeGame
         public TimedQueue<Double> angleBuffer = new TimedQueue<Double>(40);
 
         public double offset = 0.0;
-        
         public float windowSize = 3;
 
         //vertical min and max > threshold and horizontal min and max < 

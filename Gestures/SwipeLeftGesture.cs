@@ -9,9 +9,9 @@ using Microsoft.Kinect;
 
 namespace ShapeGame.Gestures
 {
-    public class CrossGesture: Gesture
+    public class SwipeLeftGesture : Gesture
     {
-       
+        
         readonly int WINDOW_SIZE = 50;
 
         IGestureSegment[] _segments;
@@ -23,18 +23,18 @@ namespace ShapeGame.Gestures
 
         public event EventHandler GestureRecognized;
 
-        public CrossGesture()
+        public SwipeLeftGesture()
         {
 
-            CrossSegment1 crossSegment1 = new CrossSegment1();
-            CrossSegment2 crossSegment2 = new CrossSegment2();
-            CrossSegment3 crossSegment3 = new CrossSegment3();
+            SwipeLeftSegment1 swipeLeftSegment1 = new SwipeLeftSegment1();
+            SwipeLeftSegment2 swipeLeftSegment2 = new SwipeLeftSegment2();
+            SwipeLeftSegment3 swipeLeftSegment3 = new SwipeLeftSegment3();
 
             _segments = new IGestureSegment[]
             {
-                crossSegment1,
-                crossSegment2,
-                crossSegment3
+                swipeLeftSegment1,
+                swipeLeftSegment2,
+                swipeLeftSegment3
             };
         }
 
