@@ -224,9 +224,21 @@ window.addEventListener('load', function() {
       input.addListener('controlchange', "all",
           function (e) {
             //console.log("Received 'controlchange' message.", e);
+            console.log(e);
             console.log(e.controller);
             if(e.controller.number == 64){
-              pedalPressed();
+              //if(e.con)
+              //controlLock = e.value <= 0;
+              if(e.value > 0){
+                pedalPressed();
+              }else{
+                controlLock = true;
+              }
+
+              //send default pedal
+              if(!pedalControlMode){
+                sendCCChange(64, e.value);
+              }
             }
           }
       );
@@ -242,8 +254,62 @@ window.addEventListener('load', function() {
 
   setupMidi();
 
+  let pedalControlMode = true; //false is traditional pedal
+  let pedalHitCount = 0;
+  let pedalBounceTime = 500;
+  let pedalTimeOut = null;
+
+  //looping state
+  let CLEAR = 0;
+  let LOOP_START_SET = 1;
+  let LOOP_END_SET = 2;
+  let LOOP_STATE = CLEAR;
+
   function pedalPressed(){
-    controlLock = !controlLock;
+    if(pedalTimeOut){
+      clearTimeout(pedalTimeOut);
+    }
+
+    pedalHitCount += 1;
+    pedalTimeOut = setTimeout(() => {
+      pedalAction(pedalHitCount);
+      pedalHitCount = 0;
+      pedalTimeOut = null;
+    }, pedalBounceTime);
+
+    //console.log()
+    //controlLock = !controlLock;
+  }
+
+  function pedalAction(n){
+    //console.log("PEDAL ACTION", n);
+
+    if(n == 3){
+      pedalControlMode = !pedalControlMode;
+    }
+    if(n == 2){
+      //set loop points
+      if(LOOP_STATE == CLEAR){
+        setLoopStart();
+        LOOP_STATE = LOOP_START_SET;
+      }
+      else if(LOOP_STATE == LOOP_START_SET) {
+        setLoopEnd();
+        loopOn();
+        LOOP_STATE = LOOP_END_SET
+      }
+      else if(LOOP_STATE == LOOP_END_SET){
+        loopOff();
+        loopStart = 0;
+        loopEnd = wavesurfer.getDuration();
+        LOOP_STATE = CLEAR;
+      }
+    }
+    if(n == 1){
+      if(pedalControlMode){
+        controlLock = false;
+      }
+    }
   }
 
   function sendCCChange(cc, val){
@@ -345,9 +411,9 @@ window.addEventListener('load', function() {
     }
     //isLooping = true;
     //if(loopStart){
-    if(!bypassLoopOn){
-      loopOn();
-    }
+    //if(!bypassLoopOn){
+    //  loopOn();
+    //}
     if(Math.abs(loopStart - loopEnd) < 0.1){
       loopEnd = findAdjacentBeat(loopStart, 1)
     }
@@ -628,8 +694,10 @@ window.addEventListener('load', function() {
 
       updateCoordinates(xFinal, yFinal);
 
-      sendCCChange(1, xFinal);
-      sendCCChange(7, yFinal);
+      if(!controlLock){
+        sendCCChange(1, xFinal);
+        sendCCChange(7, yFinal);
+      }
     }
 
   }
