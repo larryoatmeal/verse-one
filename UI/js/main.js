@@ -844,10 +844,10 @@ window.addEventListener('load', function () {
 
     function updatePedalControlModeText() {
         if (pedalControlMode) {
-            pedalControlModeText.innerHTML = "Control Mode";
+            pedalControlModeText.innerHTML = "Control";
         }
         else {
-            pedalControlModeText.innerHTML = "Sustain Mode";
+            pedalControlModeText.innerHTML = "Sustain";
         }
     }
 
@@ -858,7 +858,7 @@ window.addEventListener('load', function () {
             controlLockModeText.innerHTML = "Locked";
         }
         else {
-            controlLockModeText.innerHTML = "Unlocked";
+            controlLockModeText.innerHTML = "Engaged";
         }
     }
 
