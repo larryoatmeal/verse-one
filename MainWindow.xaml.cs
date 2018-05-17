@@ -140,7 +140,8 @@ namespace ShapeGame
 //            {SpeechRecognizer.Verbs.Control, CmdControl },
 //            {SpeechRecognizer.Verbs.Lock, CmdLock },
         };
-        enum CalibrationSteps
+
+        public enum CalibrationSteps
         {
             NOT_STARTED,
             KEYBOARD_HEIGHT,
