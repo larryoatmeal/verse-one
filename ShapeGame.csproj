@@ -119,11 +119,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CalibrationWindow.xaml.cs">
-      <DependentUpon>CalibrationWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Gestures\CrossGesture.cs" />
     <Compile Include="Gestures\Gesture.cs" />
+    <Compile Include="Gestures\SwipeLeftGesture.cs" />
+    <Compile Include="Gestures\SwipeRightGesture.cs" />
     <Compile Include="IGestureSegment.cs" />
     <Compile Include="Gestures\LoopGesture.cs" />
     <Compile Include="MIDI\MIDIMaster.cs" />
@@ -136,10 +135,6 @@
     <Compile Include="Timing\TimedQueue.cs" />
     <Compile Include="Gestures\WaveGesture.cs" />
     <Compile Include="WebServer.cs" />
-    <Page Include="CalibrationWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

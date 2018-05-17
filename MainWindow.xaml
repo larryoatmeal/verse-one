@@ -19,9 +19,6 @@
                         </LinearGradientBrush>
                     </Canvas.Background>
                 </Canvas>
-                <Button Name="CalibrationButton" Width="160" Height="40" Margin="0,0,19.2,25" VerticalAlignment="Bottom" HorizontalAlignment="Right" RenderTransformOrigin="0.674,-0.072">Calibrate!</Button>
-                <TextBox Name="Threshold" Width="71" Height="35" Margin="0,0,19.2,85" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                </TextBox>
 
 
                 <kt:KinectColorViewer Margin="440,18,19.2,0" Height="120" VerticalAlignment="Top" KinectSensorManager="{Binding}"/>
