@@ -39,7 +39,7 @@ namespace ShapeGame.Speech
                 { "Patch Two", new WhatSaid { Verb = Verbs.PatchTwo } },
                 { "Patch Three", new WhatSaid { Verb = Verbs.PatchThree } },
                 { "Calibrate", new WhatSaid { Verb = Verbs.Calibrate } },
-                { "Done", new WhatSaid { Verb = Verbs.Done } },
+                { "Continue", new WhatSaid { Verb = Verbs.Done } },
 
             };
 
