@@ -229,6 +229,7 @@ window.addEventListener('load', function() {
             if(e.controller.number == 64){
               //if(e.con)
               //controlLock = e.value <= 0;
+              pedalDepressVal = e.value;
               if(e.value > 0){
                 pedalPressed();
               }else{
@@ -259,6 +260,7 @@ window.addEventListener('load', function() {
   let pedalBounceTime = 500;
   let pedalTimeOut = null;
 
+  let pedalDepressVal = 0;
   //looping state
   let CLEAR = 0;
   let LOOP_START_SET = 1;
@@ -306,7 +308,7 @@ window.addEventListener('load', function() {
       }
     }
     if(n == 1){
-      if(pedalControlMode){
+      if(pedalControlMode && pedalDepressVal == 0){//make sure user hasn't already released pedal by this point
         controlLock = false;
       }
     }
@@ -614,37 +616,45 @@ window.addEventListener('load', function() {
         else if(command === 'pause'){
           pause();
         }
-        else if(command === 'loopOn'){
-          loopOn();
-        }
+        //else if(command === 'loopOn'){
+        //  loopOn();
+        //}
         else if(command === 'togglePlay'){
           togglePlay();
         }
-        else if(command === 'toggleLoop'){
-          toggleLoop();
-        }
-        else if(command === 'loopOff'){
-          loopOff();
-        }
-        else if(command === 'setLoopStart'){
-          setLoopStart();
-        }
-        else if(command === 'setLoopEnd'){
-          setLoopEnd();
-        }
+        //else if(command === 'toggleLoop'){
+        //  toggleLoop();
+        //}
+        //else if(command === 'loopOff'){
+        //  loopOff();
+        //}
+        //else if(command === 'setLoopStart'){
+        //  setLoopStart();
+        //}
+        //else if(command === 'setLoopEnd'){
+        //  setLoopEnd();
+        //}
         else if(command === 'forward'){
           fastforward();
         }
         else if(command === 'reverse'){
           rewind();
         }
-        else if(command === 'calibrateModeOn'){
+        else if(command === 'calibrateKeyboardHeight'){
           setCalibrationModeOn();
+          calibrationText = "Please place your hands on the keyboard. Say CONTINUE to continue"
         }
-        else if(command === 'calibrateModeOff'){
+        else if(command === 'calibrateHandRaiseHeight'){
+          setCalibrationModeOn();
+          calibrationText = "Raise both hands as high as possible. Say CONTINUE to continue"
+        }
+        else if(command === 'calibrateXY'){
+          setCalibrationModeOn();
+          calibrationText = "Move your left hand in the xy region you would like to control. Say CONTINUE to finish"
+        }
+        else if(command === 'calibrateDone'){
           setCalibrationModeOff();
         }
-
         else if (command == "patchOne"){
           sendProgramChange(0);
           updateInstrument(Instrument.PIANO);

@@ -70,6 +70,12 @@ namespace ShapeGame
         private const string CmdSwipeLeft = "swipeLeft";
         private const string CmdSwipeRight = "swipeRight";
 
+        private const string CmdCalibrateKeyboardHeight = "calibrateKeyboardHeight";
+        private const string CmdCalibrateHandRaiseHeight = "calibrateHandRaiseHeight";
+        private const string CmdCalibrateXY = "calibrateXY";
+        private const string CmdCalibrateDone = "calibrateDone";
+
+
         private const string StatusXY = "XY";
         private const string StatusIsTooFar = "isTooFar";
         private const string StatusIsTooNear = "isTooNear";
@@ -134,6 +140,14 @@ namespace ShapeGame
 //            {SpeechRecognizer.Verbs.Control, CmdControl },
 //            {SpeechRecognizer.Verbs.Lock, CmdLock },
         };
+        enum CalibrationSteps
+        {
+            NOT_STARTED,
+            KEYBOARD_HEIGHT,
+            RAISE_HAND_HEIGHT,
+            XY
+        }
+        
 
         private float jointWindowSize = 0.5f;
         private static float messageWindowSize = 2;
@@ -142,7 +156,7 @@ namespace ShapeGame
         private float threshold = 0.9f;
 
 
-        public static int CalibrationStep = -1;
+        public static CalibrationSteps CalibrationStep = CalibrationSteps.NOT_STARTED;
         //XY pad
         private float padMinX = -0.4f;
         private float padMinY = 0.5f;
@@ -205,28 +219,32 @@ namespace ShapeGame
             ENTRY4.Text = padMaxY.ToString();
 
         }
-
-        private void Calibration()
+        
+        private void StartCalibration()
         {
-            if (CalibrationStep == -1)
-            {
-
-            }
-            else if (CalibrationStep == 0)
-            {
-
-            }
-            else if (CalibrationStep == 1)
-            {
-
-            }
-            else if (CalibrationStep == 2)
-            {
-
-            }
+            CalibrationStep = CalibrationSteps.KEYBOARD_HEIGHT;
+            SendCommand(CmdCalibrateKeyboardHeight);
         }
 
-
+        private void AdvanceCalibration()
+        {
+            if (CalibrationStep == CalibrationSteps.KEYBOARD_HEIGHT)
+            {
+                SendCommand(CmdCalibrateHandRaiseHeight);
+                CalibrationStep = CalibrationSteps.RAISE_HAND_HEIGHT;
+            }
+            else if (CalibrationStep == CalibrationSteps.RAISE_HAND_HEIGHT)
+            {
+                SendCommand(CmdCalibrateXY);
+                CalibrationStep = CalibrationSteps.XY;
+            }
+            else if (CalibrationStep == CalibrationSteps.XY)
+            {
+                SendCommand(CmdCalibrateDone);
+                CalibrationStep = CalibrationSteps.NOT_STARTED;
+            }
+        }
+        
         public static string SendResponse(HttpListenerRequest request)
         {
             string json = JsonConvert.SerializeObject(QUEUE, Formatting.Indented);
@@ -491,6 +509,11 @@ namespace ShapeGame
         {
             if (!isPlayerSkeletonOkay())//don't do anything if bad skeleton
             {
+                return;
+            }
+            if (CalibrationStep != CalibrationSteps.NOT_STARTED)
+            {
+                //we are calibrating
                 return;
             }
 
@@ -776,16 +799,13 @@ namespace ShapeGame
                 case SpeechRecognizer.Verbs.PatchThree:
                     midiMaster.SendProgramChange(0x02);
                     break;
+                case SpeechRecognizer.Verbs.Calibrate:
+                    StartCalibration();
+                    break;
+                case SpeechRecognizer.Verbs.Done:
+                    AdvanceCalibration();
+                    break;   
             }
-
-//            switch (e.Verb)
-//            {
-//                case SpeechRecognizer.Verbs.Pause:
-//                    
-//                    break;
-//                case SpeechRecognizer.Verbs.Resume:
-//                    break;
-//            }
         }
 
         private void EnableAecChecked(object sender, RoutedEventArgs e)
