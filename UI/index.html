@@ -66,29 +66,35 @@
       <button class = "controlButton btn btn-danger btn-lg" id="fastForwardButton"><i class="fa fa-forward"></i></button>
     </div>
 
-    <div id="notifications">
-      <h1 id="loadingBeatDetect">PERFORMING BEAT DETECTION, PLEASE WAIT...</h1>
-      <h1 id="loadingRegular">LOADING SONG </h1>
-      <h1 id="skeletonText">Skeleton NOT Detected</h1>
+    <div class="flex-container-column">
 
-      <h1 id="calibrationText">In Calibration Mode: Please place your hands at your keyboard level.</h1>
-      <h1 id="isLoopingText">Currently looping</h1>
-    </div>
+      <div id="notifications">
+        <h1 id="loadingBeatDetect">PERFORMING BEAT DETECTION, PLEASE WAIT...</h1>
+        <h1 id="loadingRegular">LOADING SONG </h1>
+        <h1 id="skeletonText">Skeleton NOT Detected</h1>
 
-    <div class="flex-container-row">
-      <div class="flex-container-column">
-        <h1 id="instrumentText" class="flex-item">Current instrument: <span id="instrumentName">Piano</span></h1>
-        <div id="instrumentImage" class="pianoImage flex-item"></div>
-      </div>
-      <div class="flex-container-column">
+        <h1 id="calibrationText">In Calibration Mode: Please place your hands at your keyboard level.</h1>
+        <h1 id="isLoopingText">Currently looping</h1>
+        <h1 id="pedalControlText">Petal Control: <span id="pedalControlModeText">Sustain Mode</span></h1>
+        <h1 id="controlLockText">Control Lock: <span id="controlLockModeText">Locked</span></h1>
 
-        <canvas class="flex-item" id="canvas" width='508' height='508'></canvas>
-        <p id="coordinates"></p>
       </div>
 
+      <div class="flex-container-row">
+        <div class="flex-container-column">
+          <h1 id="instrumentText" class="flex-item">Current instrument: <span id="instrumentName">Piano</span></h1>
+          <div id="instrumentImage" class="pianoImage flex-item"></div>
+        </div>
+        <div class="flex-container-column">
+
+          <canvas class="flex-item" id="canvas" width='508' height='508'></canvas>
+          <p id="coordinates"></p>
+        </div>
+
+      </div>
+
+
     </div>
-
-
   </div>
 
 </body>

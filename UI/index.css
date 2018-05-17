@@ -39,12 +39,27 @@ margin-top: 10px;
 #notifications {
   width: 100%;
   margin-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 
-  height: 10vh;
+  height: 12vh;
 }
 
 #skeletonText {
+  display: block;
+  margin: auto;
+  text-align: center;
+  font-size: 3vh;
+}
+
+
+#pedalControlText {
+  display: block;
+  margin: auto;
+  text-align: center;
+  font-size: 3vh;
+}
+
+#controlLockText {
   display: block;
   margin: auto;
   text-align: center;
