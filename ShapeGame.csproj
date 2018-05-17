@@ -121,6 +121,7 @@
     </ApplicationDefinition>
     <Compile Include="Gestures\CrossGesture.cs" />
     <Compile Include="Gestures\Gesture.cs" />
+    <Compile Include="Gestures\SwipeBothGesture.cs" />
     <Compile Include="Gestures\SwipeLeftGesture.cs" />
     <Compile Include="Gestures\SwipeRightGesture.cs" />
     <Compile Include="IGestureSegment.cs" />

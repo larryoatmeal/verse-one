@@ -67,8 +67,8 @@ namespace ShapeGame
         private const string CmdPatchThree = "patchThree";
         private const string CmdLock = "lock";
         private const string CmdControl = "control";
-        private const string CmdSwipeLeft = "swipeLeft";
         private const string CmdSwipeRight = "swipeRight";
+        private const string CmdSwipeBoth = "swipeBoth";
 
         private const string CmdCalibrateKeyboardHeight = "calibrateKeyboardHeight";
         private const string CmdCalibrateHandRaiseHeight = "calibrateHandRaiseHeight";
@@ -114,8 +114,8 @@ namespace ShapeGame
         static WaveGesture waveGesture = new WaveGesture();
         static MoveBackGesture moveBackGesture = new MoveBackGesture();
         static MoveForwardGesture moveForwardGesture = new MoveForwardGesture();
-        static SwipeLeftGesture swipeLeftGesture = new SwipeLeftGesture();
-        static SwipeRightGesture swipeRightGesture = new SwipeRightGesture();
+        static SwipeLeftGesture _swipeLeftGesture = new SwipeLeftGesture();
+        static SwipeBothGesture swipeBothGesture = new SwipeBothGesture();
 
         public static TimedQueue<Dictionary<string, string>> QUEUE;
         public static TimedQueue<JointCollection> jointQueue;
@@ -123,8 +123,8 @@ namespace ShapeGame
         public static Dictionary<Gesture, string> gestureMap = new Dictionary<Gesture, string>()
         {
             {crossGesture, CmdTogglePlay},
-            {swipeLeftGesture, CmdSwipeLeft},
-            {swipeRightGesture, CmdSwipeRight},
+            {_swipeLeftGesture, CmdSwipeRight},
+            {swipeBothGesture, CmdSwipeBoth},
 //            {raiseLeftHandGesture, CmdSetloopstart },
 //            {raiseRightHandGesture, CmdSetloopend },
 //            {waveGesture, CmdToggleloop },
@@ -156,8 +156,7 @@ namespace ShapeGame
         private static int ID = 0;
         private float threshold = 0.9f;
 
-
-        public static CalibrationSteps CalibrationStep = CalibrationSteps.NOT_STARTED;
+        static CalibrationSteps CalibrationStep = CalibrationSteps.NOT_STARTED;
         //XY pad
         private float padMinX = -0.4f;
         private float padMinY = 0.5f;
@@ -452,8 +451,8 @@ namespace ShapeGame
                                 waveGesture.Update(skeleton);
                                 moveBackGesture.Update(skeleton);
                                 moveForwardGesture.Update(skeleton);
-                                swipeLeftGesture.Update(skeleton);
-                                swipeRightGesture.Update(skeleton);
+                                _swipeLeftGesture.Update(skeleton);
+                                swipeBothGesture.Update(skeleton);
 
                                 //player.DetectGesture(skeleton.Joints);
                                 // Head, hands, feet (hit testing happens in order here)
@@ -550,8 +549,8 @@ namespace ShapeGame
             waveGesture.Reset();
             moveBackGesture.Reset();
             moveForwardGesture.Reset();
-            swipeLeftGesture.Reset();
-            swipeRightGesture.Reset();
+            _swipeLeftGesture.Reset();
+            swipeBothGesture.Reset();
         }
 
 
