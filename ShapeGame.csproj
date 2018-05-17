@@ -123,7 +123,7 @@
     <Compile Include="Gestures\Gesture.cs" />
     <Compile Include="Gestures\SwipeBothGesture.cs" />
     <Compile Include="Gestures\SwipeLeftGesture.cs" />
-    <Compile Include="Gestures\SwipeRightGesture.cs" />
+    <Compile Include="Gestures\SwipeRightHand.cs" />
     <Compile Include="IGestureSegment.cs" />
     <Compile Include="Gestures\LoopGesture.cs" />
     <Compile Include="MIDI\MIDIMaster.cs" />
