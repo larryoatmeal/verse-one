@@ -156,7 +156,7 @@ namespace ShapeGame
         private static int ID = 0;
         private float threshold = 0.9f;
 
-        static CalibrationSteps CalibrationStep = CalibrationSteps.NOT_STARTED;
+        public static CalibrationSteps CalibrationStep = CalibrationSteps.NOT_STARTED;
         //XY pad
         private float padMinX = -0.4f;
         private float padMinY = 0.5f;
@@ -222,25 +222,28 @@ namespace ShapeGame
         
         private void StartCalibration()
         {
-            CalibrationStep = CalibrationSteps.KEYBOARD_HEIGHT;
-            SendCommand(CmdCalibrateKeyboardHeight);
+            if (CalibrationStep == CalibrationSteps.NOT_STARTED)
+            {
+                CalibrationStep = CalibrationSteps.KEYBOARD_HEIGHT;
+                SendCommand(CmdCalibrateKeyboardHeight, true, false);
+            }
         }
 
         private void AdvanceCalibration()
         {
             if (CalibrationStep == CalibrationSteps.KEYBOARD_HEIGHT)
             {
-                SendCommand(CmdCalibrateHandRaiseHeight);
+                SendCommand(CmdCalibrateHandRaiseHeight, true, false);
                 CalibrationStep = CalibrationSteps.RAISE_HAND_HEIGHT;
             }
             else if (CalibrationStep == CalibrationSteps.RAISE_HAND_HEIGHT)
             {
-                SendCommand(CmdCalibrateXY);
+                SendCommand(CmdCalibrateXY, true, false);
                 CalibrationStep = CalibrationSteps.XY;
             }
             else if (CalibrationStep == CalibrationSteps.XY)
             {
-                SendCommand(CmdCalibrateDone);
+                SendCommand(CmdCalibrateDone, true, false);
                 CalibrationStep = CalibrationSteps.NOT_STARTED;
             }
         }
@@ -505,17 +508,9 @@ namespace ShapeGame
         }
 
 
-        void SendCommand(string command, bool debug = true)
+        void SendCommand(string command, bool debug = true, bool ignoreIfSkeletonBad = true)
         {
-            if (!isPlayerSkeletonOkay())//don't do anything if bad skeleton
-            {
-                return;
-            }
-            if (CalibrationStep != CalibrationSteps.NOT_STARTED)
-            {
-                //we are calibrating
-                return;
-            }
+            
 
             if (debug)
             {
@@ -523,6 +518,16 @@ namespace ShapeGame
                 Console.WriteLine(command);
                 bellSound.Play();
             }
+
+            if (ignoreIfSkeletonBad && !isPlayerSkeletonOkay())//don't do anything if bad skeleton
+            {
+                return;
+            }
+//            if (CalibrationStep != CalibrationSteps.NOT_STARTED)
+//            {
+//                //we are calibrating
+//                return;
+//            }
 
             Dictionary<string, string> cmd = new Dictionary<string, string>
             {

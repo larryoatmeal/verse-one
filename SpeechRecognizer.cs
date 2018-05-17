@@ -39,7 +39,7 @@ namespace ShapeGame.Speech
                 { "Patch Two", new WhatSaid { Verb = Verbs.PatchTwo } },
                 { "Patch Three", new WhatSaid { Verb = Verbs.PatchThree } },
                 { "Calibrate", new WhatSaid { Verb = Verbs.Calibrate } },
-                { "Continue", new WhatSaid { Verb = Verbs.Done } },
+                { "Next", new WhatSaid { Verb = Verbs.Done } },
 
             };
 
@@ -280,79 +280,6 @@ namespace ShapeGame.Speech
                 }
             }
 
-            if (said.Verb == Verbs.Stop)
-            {
-                Dictionary<string, string> cmd = new Dictionary<string, string>
-                    {
-                        { "Command", "pause" },
-                    };  
-                MainWindow.QUEUE.Push(cmd);
-            }
-
-            else if (said.Verb == Verbs.Play)
-            {
-                Dictionary<string, string> cmd = new Dictionary<string, string>
-                    {
-                        { "Command", "play" },
-                    };
-                MainWindow.QUEUE.Push(cmd);
-            }
-
-            else if (said.Verb == Verbs.LoopOn)
-            {
-                Dictionary<string, string> cmd = new Dictionary<string, string>
-                    {
-                        { "Command", "loopOn" },
-                    };
-                MainWindow.QUEUE.Push(cmd);
-            }
-
-            else if (said.Verb == Verbs.LoopOff)
-            {
-                Dictionary<string, string> cmd = new Dictionary<string, string>
-                    {
-                        { "Command", "loopOff" },
-                    };
-                MainWindow.QUEUE.Push(cmd);
-            }
-
-            else if (said.Verb == Verbs.SetLoopStart)
-            {
-                Dictionary<string, string> cmd = new Dictionary<string, string>
-                    {
-                        { "Command", "setLoopStart" },
-                    };
-                MainWindow.QUEUE.Push(cmd);
-            }
-
-            else if (said.Verb == Verbs.SetLoopEnd)
-            {
-                Dictionary<string, string> cmd = new Dictionary<string, string>
-                    {
-                        { "Command", "setLoopEnd" },
-                    };
-                MainWindow.QUEUE.Push(cmd);
-            }
-
-            else if (said.Verb == Verbs.Calibrate)
-            {
-                Dictionary<string, string> cmd = new Dictionary<string, string>
-                {
-                    { "Command", "calibrate" },
-                };
-                MainWindow.QUEUE.Push(cmd);
-                MainWindow.CalibrationStep = 0;
-            }
-
-            else if (said.Verb == Verbs.Done)
-            {
-                Dictionary<string, string> cmd = new Dictionary<string, string>
-                {
-                    { "Command", "done" },
-                };
-                MainWindow.QUEUE.Push(cmd);
-                MainWindow.CalibrationStep += 1;
-            }
 
             if (!found)
             {
