@@ -11,7 +11,9 @@ namespace ShapeGame.Gestures
 {
     public class SwipeLeftGesture : Gesture
     {
+
         
+
         readonly int WINDOW_SIZE = 50;
 
         IGestureSegment[] _segments;
