@@ -669,18 +669,22 @@ window.addEventListener('load', function () {
                     rewind();
                 }
                 else if (command === 'calibrateKeyboardHeight') {
+                    playSound("audio/calib1.wav")                    
                     setCalibrationModeOn();
                     calibrationText.innerHTML = "Please place your hands on the keyboard. Say NEXT to continue"
                 }
                 else if (command === 'calibrateHandRaiseHeight') {
+                    playSound("audio/calib2.wav")                    
                     setCalibrationModeOn();
                     calibrationText.innerHTML = "Raise both hands as high as possible. Say NEXT to continue"
                 }
                 else if (command === 'calibrateXY') {
+                    playSound("audio/calib3.wav")                    
                     setCalibrationModeOn();
                     calibrationText.innerHTML = "Move your left hand in the xy region you would like to control. Say NEXT to finish"
                 }
                 else if (command === 'calibrateDone') {
+                    playSound("audio/calib4.wav")                    
                     setCalibrationModeOff();
                 }
                 else if (command == "patchOne") {
@@ -892,6 +896,11 @@ window.addEventListener('load', function () {
         else {
             controlLockModeText.innerHTML = "Engaged";
         }
+    }
+
+    function playSound(file){
+        var audio = new Audio(file);
+        audio.play();
     }
 
     updatePedalControlModeText();

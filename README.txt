@@ -60,7 +60,7 @@ Beat detection results are cached once computed. To test your own song, place a 
 
 ACKNOWLEDGEMENTS
 
-Beat detection based off algorithm presented in Eran Egozy's 21M.387 class
+Beat detection based off algorithm and pset presented in Eran Egozy's 21M.387 class
 
 Kinect application built off of demo app provided by Microsoft, Shape Games
 
