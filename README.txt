@@ -5,7 +5,7 @@ HARDWARE
 2 Mac Computer (Client, could possibly run on Windows, but untested)
 3 Kinect
 4 A MIDI Keyboard Controller
-5 Wireless Nextwork
+5 Wireless Network
 
 SOFTWARE
 For Windows Computer:
@@ -53,8 +53,14 @@ node index.js
 To start the web app. Open localhost:3000 in Google Chrome (other browsers do not have support for WebMIDI)
 
 
+ADDING SONGS
+
+Beat detection results are cached once computed. To test your own song, place a .WAV file (WITH 22050HZ SAMPLING RATE) in the beatDetection/5_beat/audio. (Note the .wav files included are actually 44100 Hz for better sound quality. We ran the algorithm on the 22050Hz version to generate the json and then replaced the .wav with the original 44100 Hz version. In future version we would want to do the sample conversion for you)
 
 
+ACKNOWLEDGEMENTS
 
+Beat detection based off algorithm presented in Eran Egozy's 21M.387 class
 
+Kinect application built off of demo app provided by Microsoft, Shape Games
 

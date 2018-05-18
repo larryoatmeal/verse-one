@@ -446,7 +446,7 @@ window.addEventListener('load', function () {
         //  loopOn();
         //}
         if (Math.abs(loopStart - loopEnd) < 0.1) {
-            loopEnd = findAdjacentBeat(loopStart, 1)
+            loopEnd = findAdjacentBeat(loopStart, 4)
         }
 
         setTimePosition(divB, loopEnd);
