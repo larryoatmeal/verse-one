@@ -898,11 +898,13 @@ window.addEventListener('load', function () {
         }
     }
 
-    function playSound(file){
-        var audio = new Audio(file);
-        audio.play();
-    }
+    
 
     updatePedalControlModeText();
     updateControlLockText();
 });
+
+function playSound(file){
+    var audio = new Audio(file);
+    audio.play();
+}
