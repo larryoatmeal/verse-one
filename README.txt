@@ -41,6 +41,8 @@ RUNNING BACKEND
 To run the backend, open ShapeGame.sln with Visual Studio (in ADMINSTRATOR mode), and compile/run it. Check the url localhost:8080/test on the Windows computer to verify the backend is running. A screen should also appear that will show the skeleton once the user is detected.
 
 RUNNING FRONTEND
+Make sure Matplotlib and Numpy are installed for python
+
 cd into the folder "WebBackend". You will have to install some node packages:
 
 npm install express
