@@ -1,61 +1,22 @@
-﻿
-midi-dot-net
-Copyright (c) 2009 Tom Lokovic
+Running Verse-One is quite an involved process given the amount of components needed. First we list the requisite hardware and software packages.
 
-----------------------------------------------------------------------------------------------------
+HARDWARE 
+1 Windows Computer (Server)
+2 Mac Computer (Client, could possibly run on Windows, but untested)
+3 Kinect
+4 A MIDI Keyboard Controller
+5 Wireless Nextwork
 
-OVERVIEW
+SOFTWARE
+For Windows Computer:
+1 Visual Studio
+2 Kinect SDK installed
 
-This is a .NET library, written in C#, which provides support for MIDI input/output devices.
-For details and the latest downloads, see the project page:
+For Mac Computer:
+1 Node JS
+2 Google Chrome
+3 MidiPipe (free)
+4 MainStage, or some other MIDI supported musical instrument
 
-                          http://code.google.com/p/midi-dot-net/
-
-----------------------------------------------------------------------------------------------------
-
-INSTALLATION (BINARY DISTRIBUTION)
-
-If you received the binary distribution, you can use it from another Visual Studio project as
-follows.  Right-click on your project in the Solution Explorer and choose Add Reference from the
-context menu.  Select the Browse tab, then browse to the location of Midi.dll and select that as
-the reference.
-
-The binary distribution also includes a copy of the HTML API documentation.  You can browse this
-locally with your favorite web browser by starting at docs/index.html.
-
-----------------------------------------------------------------------------------------------------
-
-INSTALLATION (SOURCE DISTRIBUTION)
-
-If you received the source distribution, simply open MidiDotNet.sln in Visual Studio.  The
-solution consists of two projects:
-
-       - Midi: The MIDI support library.
-       - MidiExamples: An interactive example program.
-       
-To run the example program, ensure that MidiExamples is the StartUp project by right-clicking on it
-in the Solution Explorer, and choose Set as StartUp Project from the context menu.  Then run the
-program with Debug > Start Debugging (or press F5).
-
-You can make one of your own projects refer to the Midi library from the source distribution as
-follows.  Build MidiDotNet.sln with Build > Build Solution (or press F6).  Locate the resulting
-Midi.dll under bin/Debug or bin/Release, depending how you built it.  Then open your project,
-right-click on your project in the Solution Explorer, and choose Add Reference from the context
-menu.    Select the Browse tab, then browse to the location of Midi.dll and select that as the
-reference.
-
-The binary distribution also includes a copy of the HTML API documentation.  You can browse this
-locally with your favorite web browser by starting at Midi/docs/index.html.
-
-----------------------------------------------------------------------------------------------------
-
-LICENSE
-
-This library is distributed under the the New BSD License.  Each source file should have a
-copy of the license in a comment at the top.  Under the terms of the license, redistribution of the
-source code is allowed but requires, among other things, that the license text be retained.  For
-details, see that license text or the official site:
-
-                         http://www.opensource.org/licenses/bsd-license.php
-
-----------------------------------------------------------------------------------------------------
+NETWORK SETUP
+In order to make server and client communicate, they must be connected on the same local network. On the windows machine, find the local IP. Then in the folder UI/index.html

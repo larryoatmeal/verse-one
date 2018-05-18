@@ -544,7 +544,7 @@ def find_beat_period(nov, fr, bpm_low, bpm_high):
 # In[56]:
 
 
-def beatDetect(fileName, alpha = 0.7, fft_len = 2048, hop_size = 512):
+def beatDetect(fileName, alpha = 0.9, fft_len = 2048, hop_size = 512):
     snd = load_wav(fileName)
     sr = 22050.
     fft_len = 2048
@@ -563,7 +563,7 @@ def beatDetect(fileName, alpha = 0.7, fft_len = 2048, hop_size = 512):
     
     a = alpha
     novWeighted = a * nov1 + (1-a) * nov2 
-    beats = fmp.create_dp_beats(novWeighted, int(round(est_period)*4), lmda = 5.)
+    beats = fmp.create_dp_beats(novWeighted, int(round(est_period)), lmda = 5.)
     return (beats/fr, lagToBpm(est_period, fr))   
 
 

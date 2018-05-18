@@ -2,16 +2,39 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51272bc7-082c-41ac-a628-0cded22ea45b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Gestures/SwipeBothGesture.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Debug/ShapeGame.exe" afterPath="$PROJECT_DIR$/bin/Debug/ShapeGame.exe" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gestures/SwipeLeftGesture.cs" afterPath="$PROJECT_DIR$/Gestures/SwipeLeftGesture.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gestures/SwipeRightGesture.cs" afterPath="$PROJECT_DIR$/Gestures/SwipeRightGesture.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/IGestureSegment.cs" afterPath="$PROJECT_DIR$/IGestureSegment.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MainWindow.xaml.cs" afterPath="$PROJECT_DIR$/MainWindow.xaml.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ShapeGame.csproj" afterPath="$PROJECT_DIR$/ShapeGame.csproj" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/UI/index.css" afterPath="$PROJECT_DIR$/UI/index.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/UI/index.html" afterPath="$PROJECT_DIR$/UI/index.html" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/42.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/42.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/Kool &amp; The Gang - Celebration.mp3" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/PRIMARY_42.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/[MV] Primary(프라이머리) _ ~42 (feat. SAM KIM, eSNa)(~42 (feat. 샘김 (SAM KIM), 에스나 (eSNa))).mp3" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/bach_prelude13.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/bach_prelude13.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/beatles_being_for_the_benefit_of_mr_kite.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/beatles_being_for_the_benefit_of_mr_kite.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/beatles_i_want_you.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/beatles_i_want_you.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/beatles_lucy_excerpt.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/beatles_lucy_excerpt.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/beeth5_orch_21bars.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/beeth5_orch_21bars.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/celebration.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/celebration.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/celebration_short.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/celebration_short.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/click.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/dancing_queen.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/dancing_queen.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/hancock_chameleon.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/hancock_chameleon.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/queen_another_one.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/queen_another_one.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/snow.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/snow.wav" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/wonder_superstition.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/beatDetection/5_beat/audio/wonder_superstition.wav" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/UI/js/main.js" afterPath="$PROJECT_DIR$/UI/js/main.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebBackend/index.js" afterPath="$PROJECT_DIR$/WebBackend/index.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/beatDetection/5_beat/pset5.py" afterPath="$PROJECT_DIR$/beatDetection/5_beat/pset5.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -41,7 +64,7 @@
       <file leaf-file-name="MainWindow.xaml.cs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MainWindow.xaml.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
+            <state relative-caret-position="1190">
               <caret line="255" column="62" lean-forward="false" selection-start-line="255" selection-start-column="61" selection-end-line="255" selection-end-column="62" />
               <folding>
                 <marker date="1526543768409" expanded="true" signature="0:489" ph="/* ------------------------------------------------------------------------------ ... */" />
@@ -348,12 +371,12 @@
       <option name="presentableId" value="Default" />
       <updated>1526537743689</updated>
       <workItem from="1526537750629" duration="1076000" />
-      <workItem from="1526539310416" duration="1563000" />
+      <workItem from="1526539310416" duration="2249000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2639000" />
+    <option name="totallyTimeSpent" value="3325000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -366,7 +389,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1280" height="777" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Errors In Solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -607,7 +629,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MainWindow.xaml.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
+        <state relative-caret-position="1190">
           <caret line="255" column="62" lean-forward="false" selection-start-line="255" selection-start-column="61" selection-end-line="255" selection-end-column="62" />
           <folding>
             <marker date="1526543768409" expanded="true" signature="0:489" ph="/* ------------------------------------------------------------------------------ ... */" />

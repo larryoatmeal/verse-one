@@ -118,12 +118,20 @@ window.addEventListener('load', function () {
         return maxIndex;
     }
 
+
+
+
     function findNearestBeat(time) {
 
         let diffs = beatData.beats.map(beat => {
             return Math.abs(beat - time);
         });
-        let closest = beatData.beats[argMin(diffs)];
+
+        let best = argMin(diffs);
+
+        let index = Math.floor(best / 4) * 4;
+
+        let closest = beatData.beats[index];
         return closest;
     }
 
@@ -312,7 +320,7 @@ window.addEventListener('load', function () {
             }
         }
         if (n == 1) {
-            if (pedalControlMode && pedalDepressVal == 0) {//make sure user hasn't already released pedal by this point
+            if (pedalControlMode && pedalDepressVal == 127) {//make sure user hasn't already released pedal by this point
                 controlLock = false;
                 updateControlLockText();
             }
@@ -406,6 +414,24 @@ window.addEventListener('load', function () {
 
     }
 
+    let currentIndex = 0;
+    let songs = ["1_polkadots","2_42", "3_brandy"];
+    let select = document.getElementById('songList');
+
+    function nextSong(){
+        currentIndex = (currentIndex + 1) % 3;
+        select.value = songs[currentIndex];
+        loadSong(songs[currentIndex]);
+        //loadSong(currentIndex);
+    }
+    function previousSong(){
+        currentIndex = (currentIndex + 3 - 1) % 3;
+        select.value = songs[currentIndex];
+        loadSong(songs[currentIndex]);
+
+        //loadSong(currentIndex);
+    }
+
     function setLoopEnd(ts, bypassLoopOn) {
         loopEnd = wavesurfer.getCurrentTime();
 
@@ -442,11 +468,11 @@ window.addEventListener('load', function () {
     }
 
     function rewind() {
-        seekToTime(findAdjacentBeat(wavesurfer.getCurrentTime(), -2))
+        seekToTime(findAdjacentBeat(wavesurfer.getCurrentTime(), -8))
     }
 
     function fastforward() {
-        seekToTime(findAdjacentBeat(wavesurfer.getCurrentTime(), 2))
+        seekToTime(findAdjacentBeat(wavesurfer.getCurrentTime(), 8))
     }
 
     function seekToTime(t) {
@@ -668,6 +694,12 @@ window.addEventListener('load', function () {
                 else if (command == "patchThree") {
                     sendProgramChange(2);
                     updateInstrument(Instrument.ORGAN);
+                }
+                else if (command == "Next Song") {
+                    nextSong();
+                }
+                else if (command == "Previous Song") {
+                    previousSong();
                 }
 
                 processedMessages.add(id);
