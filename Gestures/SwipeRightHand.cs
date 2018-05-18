@@ -9,7 +9,7 @@ using Microsoft.Kinect;
 
 namespace ShapeGame.Gestures
 {
-    public class SwipeRightGesture : Gesture
+    public class SwipeRightHand : Gesture
     {
 
 
@@ -25,19 +25,32 @@ namespace ShapeGame.Gestures
 
         public event EventHandler GestureRecognized;
 
-        public SwipeRightGesture()
+        public SwipeRightHand(bool right = true)
         {
 
             SwipeRightSegment1 swipeRightSegment1 = new SwipeRightSegment1();
             SwipeRightSegment2 swipeRightSegment2 = new SwipeRightSegment2();
             SwipeRightSegment3 swipeRightSegment3 = new SwipeRightSegment3();
 
-            _segments = new IGestureSegment[]
+            if (right)
             {
-                swipeRightSegment1,
-                swipeRightSegment2,
-                swipeRightSegment3
-            };
+                _segments = new IGestureSegment[]
+                {
+                    swipeRightSegment1,
+                    swipeRightSegment2,
+                    swipeRightSegment3
+                };
+            }
+            else
+            {
+                _segments = new IGestureSegment[]
+                {
+                    swipeRightSegment3,
+                    swipeRightSegment2,
+                    swipeRightSegment1
+                };
+            }
+            
         }
 
         /// <summary>

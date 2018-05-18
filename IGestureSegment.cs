@@ -88,13 +88,14 @@ namespace ShapeGame
     public class CrossSegment1 : IGestureSegment
     {
 
+
         public GesturePartResult Update(Skeleton skeleton)
         {
             // left hand to right of left elbow and right hand to the left of right elbow
             var leftArmCorrect = skeleton.Joints[JointType.HandLeft].Position.X > skeleton.Joints[JointType.ElbowLeft].Position.X;
             var rightArmCorrect = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ElbowRight].Position.X;
             var handsCorrect = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.HandLeft].Position.X;
-            if (leftArmCorrect && rightArmCorrect && handsCorrect)
+            if (leftArmCorrect && rightArmCorrect && handsCorrect && MainWindow.LeftHandHighEnough(skeleton) && MainWindow.RightHandHighEnough(skeleton))
             {
 
              return GesturePartResult.Succeeded;
@@ -110,7 +111,7 @@ namespace ShapeGame
         public GesturePartResult Update(Skeleton skeleton)
         {
             var handsCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.HandRight].Position.X;
-            if (handsCorrect)
+            if (handsCorrect && MainWindow.LeftHandHighEnough(skeleton) && MainWindow.RightHandHighEnough(skeleton))
             {
                 return GesturePartResult.Succeeded;
 
@@ -128,7 +129,7 @@ namespace ShapeGame
             var leftArmCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ElbowLeft].Position.X;
             var rightArmCorrect = skeleton.Joints[JointType.HandRight].Position.X > skeleton.Joints[JointType.ElbowRight].Position.X;
             var handsCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.HandRight].Position.X;
-            if (leftArmCorrect && rightArmCorrect && handsCorrect)
+            if (leftArmCorrect && rightArmCorrect && handsCorrect && MainWindow.LeftHandHighEnough(skeleton) && MainWindow.RightHandHighEnough(skeleton))
             {
                 return GesturePartResult.Succeeded;
 
@@ -200,13 +201,23 @@ namespace ShapeGame
 
         public GesturePartResult Update(Skeleton skeleton)
         {
-            var rightArmCorrect = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ElbowRight].Position.X;
-            var handsCorrect = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
-            if (rightArmCorrect && handsCorrect)
+            //var rightArmCorrect = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ElbowRight].Position.X;
+            //var handsCorrect = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
+
+            var rightHand = skeleton.Joints[JointType.HandRight].Position;
+            var elbowRight = skeleton.Joints[JointType.ElbowRight].Position;
+            var shoulder = skeleton.Joints[JointType.ShoulderCenter].Position;
+
+            var rightHandY = rightHand.Y;
+            var elbowY = elbowRight.Y;
+
+            var handAboveElbow = rightHandY > elbowY;
+            var leftOfTorso = rightHand.X < shoulder.X;
+            
+
+            if (handAboveElbow && leftOfTorso && MainWindow.RightHandHighEnough(skeleton))
             {
-
                 return GesturePartResult.Succeeded;
-
             }
             return GesturePartResult.Failed;
         }
@@ -217,10 +228,21 @@ namespace ShapeGame
 
         public GesturePartResult Update(Skeleton skeleton)
         {
-//            var leftHandCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
-            var handsCorrectLeft = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ShoulderRight].Position.X;
-            var handsCorrectRight = skeleton.Joints[JointType.HandRight].Position.X > skeleton.Joints[JointType.ShoulderLeft].Position.X;
-            if (handsCorrectLeft && handsCorrectRight)
+            //            var leftHandCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
+            //            var handsCorrectLeft = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ShoulderRight].Position.X;
+            //            var handsCorrectRight = skeleton.Joints[JointType.HandRight].Position.X > skeleton.Joints[JointType.ShoulderLeft].Position.X;
+
+            var rightHand = skeleton.Joints[JointType.HandRight].Position;
+            var elbowRight = skeleton.Joints[JointType.ElbowRight].Position;
+            var shoulder = skeleton.Joints[JointType.ShoulderCenter].Position;
+
+            var rightHandY = rightHand.Y;
+            var elbowY = elbowRight.Y;
+
+            var handAboveElbow = rightHandY > elbowY;
+            var rightOfTorso  = rightHand.X > shoulder.X;
+
+            if (handAboveElbow && rightOfTorso && MainWindow.RightHandHighEnough(skeleton))
             {
                 return GesturePartResult.Succeeded;
 
@@ -234,11 +256,19 @@ namespace ShapeGame
 
         public GesturePartResult Update(Skeleton skeleton)
         {
-//            var leftHandCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
+            //            var leftHandCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
 
-            var rightArmCorrect = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ElbowRight].Position.X;
-            var elbowCorrect = skeleton.Joints[JointType.HandRight].Position.X > skeleton.Joints[JointType.ShoulderRight].Position.X;
-            if (rightArmCorrect && elbowCorrect)
+            var rightHand = skeleton.Joints[JointType.HandRight].Position;
+            var elbowRight = skeleton.Joints[JointType.ElbowRight].Position;
+            var rightShoulder = skeleton.Joints[JointType.ShoulderRight].Position;
+
+            var rightHandY = rightHand.Y;
+            var elbowY = elbowRight.Y;
+
+            var handAboveElbow = rightHandY > elbowY;
+            var rightOfRightSHooulder = rightHand.X > rightShoulder.X;
+
+            if (handAboveElbow && rightOfRightSHooulder && MainWindow.RightHandHighEnough(skeleton))
             {
                 return GesturePartResult.Succeeded;
 
@@ -247,18 +277,54 @@ namespace ShapeGame
         }
     }
 
-
-    public class SwipeLeftSegment1 : IGestureSegment
+    public class LeftHandSwipeLeftSegment1 : IGestureSegment
     {
 
         public GesturePartResult Update(Skeleton skeleton)
         {
-//            var leftHandCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
-            var rightArmCorrect = skeleton.Joints[JointType.HandRight].Position.X > skeleton.Joints[JointType.ElbowRight].Position.X;
-            var handsCorrect = skeleton.Joints[JointType.HandRight].Position.X > skeleton.Joints[JointType.ShoulderRight].Position.X;
-            if (rightArmCorrect && handsCorrect)
-            {
+            //var leftArmCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ElbowLeft].Position.X;
+            //var handsCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
 
+            var leftHand = skeleton.Joints[JointType.HandLeft].Position;
+            var elbowLeft = skeleton.Joints[JointType.ElbowLeft].Position;
+            var shoulder = skeleton.Joints[JointType.ShoulderCenter].Position;
+
+            var leftHandY = leftHand.Y;
+            var elbowY = elbowLeft.Y;
+
+            var handAboveElbow = leftHandY > elbowY;
+            var rightOfTorso = leftHand.X > shoulder.X;
+
+
+            if (handAboveElbow && rightOfTorso && MainWindow.LeftHandHighEnough(skeleton))
+            {
+                return GesturePartResult.Succeeded;
+            }
+            return GesturePartResult.Failed;
+        }
+    }
+
+    public class LeftHandSwipeLeftSegment2 : IGestureSegment
+    {
+
+        public GesturePartResult Update(Skeleton skeleton)
+        {
+            //            var leftHandCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
+            //            var handsCorrectLeft = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
+            //            var handsCorrectLeft = skeleton.Joints[JointType.HandLeft].Position.X > skeleton.Joints[JointType.ShoulderLeft].Position.X;
+
+            var leftHand = skeleton.Joints[JointType.HandLeft].Position;
+            var elbowLeft = skeleton.Joints[JointType.ElbowLeft].Position;
+            var shoulder = skeleton.Joints[JointType.ShoulderCenter].Position;
+
+            var leftHandY = leftHand.Y;
+            var elbowY = elbowLeft.Y;
+
+            var handAboveElbow = leftHandY > elbowY;
+            var leftOfTorso = leftHand.X < shoulder.X;
+
+            if (handAboveElbow && leftOfTorso && MainWindow.LeftHandHighEnough(skeleton))
+            {
                 return GesturePartResult.Succeeded;
 
             }
@@ -266,32 +332,24 @@ namespace ShapeGame
         }
     }
 
-    public class SwipeLeftSegment2 : IGestureSegment
+    public class LeftHandSwipeLeftSegment3 : IGestureSegment
     {
 
         public GesturePartResult Update(Skeleton skeleton)
         {
-//            var leftHandCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
-            var handsCorrectLeft = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ShoulderRight].Position.X;
-            var handsCorrectRight = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
-            if (handsCorrectLeft && handsCorrectRight)
-            {
-                return GesturePartResult.Succeeded;
+            //            var leftHandCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
 
-            }
-            return GesturePartResult.Failed;
-        }
-    }
+            var leftHand = skeleton.Joints[JointType.HandLeft].Position;
+            var elbowLeft = skeleton.Joints[JointType.ElbowLeft].Position;
+            var leftShoulder = skeleton.Joints[JointType.ShoulderLeft].Position;
 
-    public class SwipeLeftSegment3 : IGestureSegment
-    {
+            var leftHandY = leftHand.Y;
+            var elbowY = elbowLeft.Y;
 
-        public GesturePartResult Update(Skeleton skeleton)
-        {
-//            var leftHandCorrect = skeleton.Joints[JointType.HandLeft].Position.X < skeleton.Joints[JointType.ShoulderLeft].Position.X;
-            var rightArmCorrect = skeleton.Joints[JointType.HandRight].Position.X < skeleton.Joints[JointType.ElbowRight].Position.X;
-            var elbowCorrect = skeleton.Joints[JointType.HandRight].Position.X > skeleton.Joints[JointType.ShoulderRight].Position.X;
-            if (rightArmCorrect && elbowCorrect)
+            var handAboveElbow = leftHandY > elbowY;
+            var leftOfLeftSHooulder = leftHand.X < leftShoulder.X;
+
+            if (handAboveElbow && leftOfLeftSHooulder && MainWindow.LeftHandHighEnough(skeleton))
             {
                 return GesturePartResult.Succeeded;
 
